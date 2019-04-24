@@ -527,10 +527,17 @@ PROGRAM CE_QUAL_W2
 
   ALLOCATE (TITLE(11))
   READ (CON,'(///(8X,A72))') (TITLE(J),J=1,10)
+write (*,'((8X,A72))') (TITLE(J),J=1,10)
+
   READ (CON,'(//8X,4I8)')     NWB, NBR, IMX, KMX
+write(*,'(//8X,4I8)') NWB, NBR, IMX, KMX
   READ (CON,'(//8X,8I8)')     NTR, NST, NIW, NWD, NGT, NSP, NPI, NPU
+write(*,'(//8X,8I8)')     NTR, NST, NIW, NWD, NGT, NSP, NPI, NPU
+
   READ (CON,'(//8X,7I8,a8)')  NGC, NSS, NAL, NEP, NBOD, nmc, nzp  !v3.5
   READ (CON,'(//8X,I8)')      NOD
+  write (*,'(//8X,7I8,a8)')  NGC, NSS, NAL, NEP, NBOD, nmc, nzp  !v3.5
+  write (*,'(//8X,I8)')      NOD
 
 ! Constituent numbers
   
@@ -828,8 +835,8 @@ PROGRAM CE_QUAL_W2
   CALL TRANSPORT
   CALL KINETICS
   CALL WATERBODY
-  CALL OPEN_CHANNEL_INITIALIZE
-  CALL PIPE_FLOW_INITIALIZE
+!!  CALL OPEN_CHANNEL_INITIALIZE
+!!  CALL PIPE_FLOW_INITIALIZE
 
 ! State variables
 
@@ -932,6 +939,13 @@ PROGRAM CE_QUAL_W2
   READ (CON,'(//(:8X,9F8.0))')        (DLTF(J),            J =1,NDLT)
   READ (CON,'(//(8X,2A8))')           (VISC(JW), CELC(JW), JW=1,NWB)
 
+  write (*,'(//8X,2F8.0,I8)')         TMSTRT,   TMEND,    YEAR
+  write (*,'(//8X,I8,8F8.0)')         NDLT,     DLTMIN
+  write (*,'(//(:8X,9F8.0))')        (DLTD(J),            J =1,NDLT)
+  write (*,'(//(:8X,9F8.0))')        (DLTMAX(J),          J =1,NDLT)
+  write (*,'(//(:8X,9F8.0))')        (DLTF(J),            J =1,NDLT)
+  write (*,'(//(8X,2A8))')           (VISC(JW), CELC(JW), JW=1,NWB)
+
 ! Grid definition cards
 
   READ (CON,'(//(8X,7I8,F8.3))')      (US(JB),  DS(JB),     UHS(JB),   DHS(JB), UQB(JB), DQB(JB),  NL(JB), SLOPE(JB), JB=1,NBR)
@@ -951,6 +965,21 @@ PROGRAM CE_QUAL_W2
   READ (CON,'(//(8X,6F8.0,A8))')      (AX(JW),     DXI(JW),     CBHE(JW),    TSED(JW),  FI(JW),     TSEDF(JW),                     &
                                        FRICC(JW),                                                                     JW=1,NWB)
   READ (CON,'(//(8X,2A8,2F8.0))')     (AZC(JW),    AZSLC(JW),   AZMAX(JW),   PHISET,                                  JW=1,NWB)
+
+  write (*,'(//(8X,2F8.0,2A8))')     (T2I(JW),    ICETHI(JW),  WTYPEC(JW),  GRIDC(JW),                               JW=1,NWB)
+  write (*,'(//(8X,6A8))')           (VBC(JW),    EBC(JW),     MBC(JW),     PQC(JW),   EVC(JW),   PRC(JW),           JW=1,NWB)
+  write (*,'(//(8X,4A8))')           (WINDC(JW),  QINC(JW),    QOUTC(JW),   HEATC(JW),                               JW=1,NWB)
+
+  write (*,'(//(8X,3A8))')           (QINIC(JB),  DTRIC(JB),   HDIC(JB),                                             JB=1,NBR)
+  write (*,'(//(8X,5A8,4F8.0))')     (SLHTC(JW),  SROC(JW),    RHEVC(JW),   METIC(JW), FETCHC(JW), AFW(JW),                       &
+                                       BFW(JW),    CFW(JW),     WINDH(JW),                                            JW=1,NWB)
+  write (*,'(//(8X,2A8,6F8.0))')     (ICEC(JW),   SLICEC(JW),  ALBEDO(JW),  HWI(JW),   BETAI(JW),  GAMMAI(JW),                    &
+                                       ICEMIN(JW), ICET2(JW),                                                         JW=1,NWB)
+  write (*,'(//(8X,A8,F8.0))')       (SLTRC(JW),  THETA(JW),                                                         JW=1,NWB)
+  write (*,'(//(8X,6F8.0,A8))')      (AX(JW),     DXI(JW),     CBHE(JW),    TSED(JW),  FI(JW),     TSEDF(JW),                     &
+                                       FRICC(JW),                                                                     JW=1,NWB)
+  write (*,'(//(8X,2A8,2F8.0))')     (AZC(JW),    AZSLC(JW),   AZMAX(JW),   PHISET,                                  JW=1,NWB)
+
 
 ! Inflow-outflow cards
 
@@ -1012,24 +1041,40 @@ PROGRAM CE_QUAL_W2
   READ (CON,'(//(:8X,9F8.0))')        (ELTRB(JT),  JT=1,NTR)
   READ (CON,'(//(8X,A8))')            (DTRC(JB),   JB=1,NBR)
 
+  write(*,'(//(:8X,9A8))')          (TRC(JT),    JT=1,NTR)
+  write(*,'(//(:8X,9A8))')          (TRIC(JT),   JT=1,NTR)
+  write(*,'(//(:8X,9I8))')          (ITR(JT),    JT=1,NTR)
+  write(*,'(//(:8X,9F8.0))')        (ELTRT(JT),  JT=1,NTR)
+  write(*,'(//(:8X,9F8.0))')        (ELTRB(JT),  JT=1,NTR)
+  write(*,'(//(8X,A8))')            (DTRC(JB),   JB=1,NBR)
+
 ! Output control cards (excluding constituents)
 
   READ (CON,'(/)')
   DO JH=1,NHY
     READ (CON,'(:8X,9A8)')            (HPRWBC(JH,JW),JW=1,NWB)
+write(*,*) 'HPRWBC'
+    write(*,'(:8X,9A8)')            (HPRWBC(JH,JW),JW=1,NWB)
   END DO
+write(*,*) 'SNPC'
   READ (CON,'(//(8X,A8,2I8))')        (SNPC(JW), NSNP(JW), NISNP(JW), JW=1,NWB)
   READ (CON,'(/)')
+  write(*,'(//(8X,A8,2I8))')        (SNPC(JW), NSNP(JW), NISNP(JW), JW=1,NWB)
   DO JW=1,NWB
     READ (CON,'(:8X,9F8.0)')          (SNPD(J,JW),J=1,NSNP(JW))
+    write(*,'(:8X,9F8.0)')          (SNPD(J,JW),J=1,NSNP(JW))
   END DO
   READ (CON,'(/)')
+write(*,*) 'SNPF'
+
   DO JW=1,NWB
     READ (CON,'(:8X,9F8.0)')          (SNPF(J,JW),J=1,NSNP(JW))
+    write(*,'(:8X,9F8.0)') (SNPF(J,JW),J=1,NSNP(JW))
   END DO
   READ (CON,'(/)')
   DO JW=1,NWB
     READ (CON,'(:8X,9I8)')            (ISNP(I,JW),I=1,NISNP(JW))
+    write(*,'(:8X,9I8)') (ISNP(I,JW),I=1,NISNP(JW))
   END DO
   READ (CON,'(//(8X,A8,I8))')         (SCRC(JW), NSCR(JW), JW=1,NWB)
   READ (CON,'(/)')
@@ -1396,28 +1441,28 @@ PROGRAM CE_QUAL_W2
 ! Restart data
 
   JDAY = TMSTRT
-  IF (RESTART_IN) THEN
-    VERT_PROFILE = .FALSE.      
-    LONG_PROFILE = .FALSE.      
-    OPEN  (RSI,FILE=RSIFN,FORM='UNFORMATTED',STATUS='OLD')
-    READ  (RSI) NIT,    NV,     KMIN,   IMIN,   NSPRF,  CMBRT,  ZMIN,   IZMIN,  START,  CURRENT
-    READ  (RSI) DLTDP,  SNPDP,  TSRDP,  VPLDP,  PRFDP,  CPLDP,  SPRDP,  RSODP,  SCRDP,  FLXDP,  WDODP
-    READ  (RSI) JDAY,   YEAR,   ELTM,   ELTMF,  DLT,    DLTAV,  DLTS,   MINDLT, JDMIN,  CURMAX
-    READ  (RSI) NXTMSN, NXTMTS, NXTMPR, NXTMCP, NXTMVP, NXTMRS, NXTMSC, NXTMSP, NXTMFL, NXTMWD
-    READ  (RSI) VOLIN,  VOLOUT, VOLUH,  VOLDH,  VOLPR,  VOLTRB, VOLDT,  VOLWD,  VOLEV,  VOLSBR, VOLTR, VOLSR
-    READ  (RSI) TSSEV,  TSSPR,  TSSTR,  TSSDT,  TSSWD,  TSSIN,  TSSOUT, TSSS,   TSSB,   TSSICE
-    READ  (RSI) TSSUH,  TSSDH,  TSSUH2, TSSDH2, CSSUH2, CSSDH2, VOLUH2, VOLDH2, QUH1
-    READ  (RSI) ESBR,   ETBR,   EBRI
-    READ  (RSI) Z,      SZ,     ELWS,   SAVH2,  SAVHR,  H2
-    READ  (RSI) KTWB,   KTI,    SKTI,   SBKT   
-    READ  (RSI) ICE,    ICETH,  CUF,    QSUM
-    READ  (RSI) U,      W,      SU,     SW,     AZ,     SAZ,    DLTLIM
-    READ  (RSI) T1,     T2,     C1,     C2,     C1S,    EPD,    SED,    KFS,    CSSK
-    READ  (RSI) SEDC, SEDN, SEDP, ZOO, CD  ! mlm 10/06
-    READ  (RSI) sdkv                       ! cb 11/30/06
-    READ  (RSI) TKE                        ! sw 10/5/07
-    CLOSE (RSI)
-  END IF
+!!  IF (RESTART_IN) THEN
+!!    VERT_PROFILE = .FALSE.      
+!!    LONG_PROFILE = .FALSE.      
+!!    OPEN  (RSI,FILE=RSIFN,FORM='UNFORMATTED',STATUS='OLD')
+!!    READ  (RSI) NIT,    NV,     KMIN,   IMIN,   NSPRF,  CMBRT,  ZMIN,   IZMIN,  START,  CURRENT
+!!    READ  (RSI) DLTDP,  SNPDP,  TSRDP,  VPLDP,  PRFDP,  CPLDP,  SPRDP,  RSODP,  SCRDP,  FLXDP,  WDODP
+!!    READ  (RSI) JDAY,   YEAR,   ELTM,   ELTMF,  DLT,    DLTAV,  DLTS,   MINDLT, JDMIN,  CURMAX
+!!    READ  (RSI) NXTMSN, NXTMTS, NXTMPR, NXTMCP, NXTMVP, NXTMRS, NXTMSC, NXTMSP, NXTMFL, NXTMWD
+!!    READ  (RSI) VOLIN,  VOLOUT, VOLUH,  VOLDH,  VOLPR,  VOLTRB, VOLDT,  VOLWD,  VOLEV,  VOLSBR, VOLTR, VOLSR
+!!    READ  (RSI) TSSEV,  TSSPR,  TSSTR,  TSSDT,  TSSWD,  TSSIN,  TSSOUT, TSSS,   TSSB,   TSSICE
+!!    READ  (RSI) TSSUH,  TSSDH,  TSSUH2, TSSDH2, CSSUH2, CSSDH2, VOLUH2, VOLDH2, QUH1
+!!    READ  (RSI) ESBR,   ETBR,   EBRI
+!!    READ  (RSI) Z,      SZ,     ELWS,   SAVH2,  SAVHR,  H2
+!!    READ  (RSI) KTWB,   KTI,    SKTI,   SBKT   
+!!    READ  (RSI) ICE,    ICETH,  CUF,    QSUM
+!!    READ  (RSI) U,      W,      SU,     SW,     AZ,     SAZ,    DLTLIM
+!!    READ  (RSI) T1,     T2,     C1,     C2,     C1S,    EPD,    SED,    KFS,    CSSK
+!!    READ  (RSI) SEDC, SEDN, SEDP, ZOO, CD  ! mlm 10/06
+!!    READ  (RSI) sdkv                       ! cb 11/30/06
+!!    READ  (RSI) TKE                        ! sw 10/5/07
+!!    CLOSE (RSI)
+!!  END IF
 
 ! Open error and warning files
 
@@ -1803,99 +1848,99 @@ PROGRAM CE_QUAL_W2
       END IF
     END DO
   END IF
-  IF (PIPES) THEN
-    DO JP=1,NPI
-      IF (LATERAL_PIPE(JP)) THEN
-        IF (IDPI(JP) /= 0) THEN
-          TRIBUTARIES = .TRUE.
-          WITHDRAWALS = .TRUE.
-        ELSE
-          WITHDRAWALS = .TRUE.
-        END IF
-      END IF
-      DO JB=1,NBR
-        IF (IUPI(JP) >= US(JB) .AND. IUPI(JP) <= DS(JB)) EXIT
-      END DO
-      JBUPI(JP) = JB
-      IF (IUPI(JP) == DS(JBUPI(JP)) .AND. .NOT. LATERAL_PIPE(JP)) NST = NST+1
-      DO JW=1,NWB
-        IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
-      END DO
-      JWUPI(JP) = JW
-      IF (IDPI(JP) > 0) THEN
-        DO JB=1,NBR
-          IF (IDPI(JP) >= US(JB) .AND. IDPI(JP) <= DS(JB)) EXIT
-        END DO
-        JBDPI(JP) = JB
-        DO JW=1,NWB
-          IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
-        END DO
-        JWDPI(JP) = JW
-      END IF
-    END DO
-  END IF
-  IF (GATES) THEN
-    DO JG=1,NGT
-      IF (LATERAL_GATE(JG)) THEN
-        IF (IDGT(JG) /= 0) THEN
-          TRIBUTARIES = .TRUE.
-          WITHDRAWALS = .TRUE.
-        ELSE
-          WITHDRAWALS = .TRUE.
-        END IF
-      END IF     
-      DO JB=1,NBR
-        IF (IUGT(JG) >= US(JB) .AND. IUGT(JG) <= DS(JB)) EXIT
-      END DO
-      JBUGT(JG) = JB
-      IF (IUGT(JG) == DS(JBUGT(JG)) .AND. .NOT. LATERAL_GATE(JG)) NST = NST+1
-      DO JW=1,NWB
-        IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
-      END DO
-      JWUGT(JG) = JW
-      IF (IDGT(JG) > 0) THEN
-        DO JB=1,NBR
-          IF (IDGT(JG) >= US(JB) .AND. IDGT(JG) <= DS(JB)) EXIT
-        END DO
-        JBDGT(JG) = JB
-        DO JW=1,NWB
-          IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
-        END DO
-        JWDGT(JG) = JW
-      END IF
-    END DO
-  END IF
-  IF (PUMPS) THEN
-    DO JP=1,NPU
-      IF (LATERAL_PUMP(JP)) THEN
-        IF (IDPU(JP) /= 0) THEN
-          TRIBUTARIES = .TRUE.
-          WITHDRAWALS = .TRUE.
-        ELSE
-          WITHDRAWALS = .TRUE.
-        END IF
-      END IF     
-      DO JB=1,NBR
-        IF (IUPU(JP) >= US(JB) .AND. IUPU(JP) <= DS(JB)) EXIT
-      END DO
-      JBUPU(JP) = JB
-      IF (IUPU(JP) ==  DS(JBUPU(JP)) .AND. .NOT. LATERAL_PUMP(JP)) NST = NST+1
-      DO JW=1,NWB
-        IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
-      END DO
-      JWUPU(JP) = JW
-      IF (IDPU(JP) > 0) THEN
-        DO JB=1,NBR
-          IF (IDPU(JP) >= US(JB) .AND. IDPU(JP) <= DS(JB)) EXIT
-        END DO
-        JBDPU(JP) = JB
-        DO JW=1,NWB
-          IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
-        END DO
-        JWDPU(JP) = JW
-      END IF
-    END DO
-  END IF
+!!  IF (PIPES) THEN
+!!    DO JP=1,NPI
+!!      IF (LATERAL_PIPE(JP)) THEN
+!!        IF (IDPI(JP) /= 0) THEN
+!!          TRIBUTARIES = .TRUE.
+!!          WITHDRAWALS = .TRUE.
+!!        ELSE
+!!          WITHDRAWALS = .TRUE.
+!!        END IF
+!!      END IF
+!!      DO JB=1,NBR
+!!        IF (IUPI(JP) >= US(JB) .AND. IUPI(JP) <= DS(JB)) EXIT
+!!      END DO
+!!      JBUPI(JP) = JB
+!!      IF (IUPI(JP) == DS(JBUPI(JP)) .AND. .NOT. LATERAL_PIPE(JP)) NST = NST+1
+!!      DO JW=1,NWB
+!!        IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
+!!      END DO
+!!      JWUPI(JP) = JW
+!!      IF (IDPI(JP) > 0) THEN
+!!        DO JB=1,NBR
+!!          IF (IDPI(JP) >= US(JB) .AND. IDPI(JP) <= DS(JB)) EXIT
+!!        END DO
+!!        JBDPI(JP) = JB
+!!        DO JW=1,NWB
+!!          IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
+!!        END DO
+!!        JWDPI(JP) = JW
+!!      END IF
+!!    END DO
+!!  END IF
+!!  IF (GATES) THEN
+!!    DO JG=1,NGT
+!!      IF (LATERAL_GATE(JG)) THEN
+!!        IF (IDGT(JG) /= 0) THEN
+!!          TRIBUTARIES = .TRUE.
+!!          WITHDRAWALS = .TRUE.
+!!        ELSE
+!!          WITHDRAWALS = .TRUE.
+!!        END IF
+!!      END IF     
+!!      DO JB=1,NBR
+!!        IF (IUGT(JG) >= US(JB) .AND. IUGT(JG) <= DS(JB)) EXIT
+!!      END DO
+!!      JBUGT(JG) = JB
+!!      IF (IUGT(JG) == DS(JBUGT(JG)) .AND. .NOT. LATERAL_GATE(JG)) NST = NST+1
+!!      DO JW=1,NWB
+!!        IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
+!!      END DO
+!!      JWUGT(JG) = JW
+!!      IF (IDGT(JG) > 0) THEN
+!!        DO JB=1,NBR
+!!          IF (IDGT(JG) >= US(JB) .AND. IDGT(JG) <= DS(JB)) EXIT
+!!        END DO
+!!        JBDGT(JG) = JB
+!!        DO JW=1,NWB
+!!          IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
+!!        END DO
+!!        JWDGT(JG) = JW
+!!      END IF
+!!    END DO
+!!  END IF
+!!  IF (PUMPS) THEN
+!!    DO JP=1,NPU
+!!      IF (LATERAL_PUMP(JP)) THEN
+!!        IF (IDPU(JP) /= 0) THEN
+!!          TRIBUTARIES = .TRUE.
+!!          WITHDRAWALS = .TRUE.
+!!        ELSE
+!!          WITHDRAWALS = .TRUE.
+!!        END IF
+!!      END IF     
+!!      DO JB=1,NBR
+!!        IF (IUPU(JP) >= US(JB) .AND. IUPU(JP) <= DS(JB)) EXIT
+!!      END DO
+!!      JBUPU(JP) = JB
+!!      IF (IUPU(JP) ==  DS(JBUPU(JP)) .AND. .NOT. LATERAL_PUMP(JP)) NST = NST+1
+!!      DO JW=1,NWB
+!!        IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
+!!      END DO
+!!      JWUPU(JP) = JW
+!!      IF (IDPU(JP) > 0) THEN
+!!        DO JB=1,NBR
+!!          IF (IDPU(JP) >= US(JB) .AND. IDPU(JP) <= DS(JB)) EXIT
+!!        END DO
+!!        JBDPU(JP) = JB
+!!        DO JW=1,NWB
+!!          IF (JB >= BS(JW) .AND. JB <= BE(JW)) EXIT
+!!        END DO
+!!        JWDPU(JP) = JW
+!!      END IF
+!!    END DO
+!!  END IF
 
   ALLOCATE (ESTR(NST,NBR),WSTR(NST,NBR),QSTR(NST,NBR),KTSW(NST,NBR),KBSW(NST,NBR),SINKC(NST,NBR),POINT_SINK(NST,NBR),QNEW(KMX))
   QSTR = 0.0
@@ -3600,7 +3645,7 @@ PROGRAM CE_QUAL_W2
       YSTS  = YST
       DTPS  = DTP
       QOLDS = QOLD
-      CALL PIPE_FLOW (NIT,JDAY)
+!!      CALL PIPE_FLOW (NIT,JDAY)
       DO JP=1,NPI
 
 !****** Positive flows
@@ -3742,202 +3787,202 @@ PROGRAM CE_QUAL_W2
         END IF
       END DO
     END IF
-    IF (GATES) THEN
-      CALL GATE_FLOW
-      DO JG=1,NGT
-
+!!    IF (GATES) THEN
+!!      CALL GATE_FLOW
+!!      DO JG=1,NGT
+!!
 !****** Positive flows
-
-        JLAT = 0
-        JBU  = JBUGT(JG)
-        JBD  = JBDGT(JG)
-        IF (QGT(JG) > 0.0) THEN
-          IF (LATERAL_GATE(JG)) THEN
-            JLAT      = 1
-            JWW       = JWW+1
-            IWD(JWW)  = IUGT(JG)
-            QWD(JWW)  = QGT(JG)
-            KTWD(JWW) = KTUGT(JG)
-            KBWD(JWW) = KBUGT(JG)
-            EWD(JWW)  = EGT(JG)
-            JBWD(JWW) = JBU
-            I         = MAX(CUS(JBWD(JWW)),IWD(JWW))
-            JW        = JWUGT(JG)
-            JB        = JBWD(JWW)
-            KT        = KTWB(JW)
-            CALL LATERAL_WITHDRAWAL (JWW)
-            DO K=KTW(JWW),KBW(JWW)
-              QSS(K,I) = QSS(K,I)-QSW(K,JWW)
-            END DO
-            IF (IDGT(JG) /= 0) THEN
-              CSUM(CN(1:NAC)) = 0.0; TSUM = 0.0; QSUMM = 0.0
-              DO K=KTW(JWW),KBW(JWW)
-                QSUMM           = QSUMM          +QSW(K,JWW)
-                TSUM            = TSUM           +QSW(K,JWW)*T2(K,IWD(JWW))
-                CSUM(CN(1:NAC)) = CSUM(CN(1:NAC))+QSW(K,JWW)*C2(K,IWD(JWW),CN(1:NAC))
-              END DO
-              TTR(JTT) = TSUM/QSUMM
-              DO JC=1,NAC
-                CTR(CN(JC),JTT) = CSUM(CN(JC))/QSUMM
-                IF (CN(JC) == NDO .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
-                  TDG_GATE(JWW,JG) = .TRUE.
-                  CALL TOTAL_DISSOLVED_GAS (PALT(ID),1,JG,TTR(JTT),CTR(CN(JC),JTT))
-                END IF
-              END DO
-            ELSE IF (CAC(NDO) == '      ON' .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
-              TDG_GATE(JWW,JG) = .TRUE.
-            END IF
-          ELSE
-            JSS(JBU)                 =  JSS(JBU)+1
-            KTSW(JSS(JBU),JBU)       =  KTUGT(JG)
-            KBSW(JSS(JBU),JBU)       =  KBUGT(JG)
-            JB                       =  JBU
-            POINT_SINK(JSS(JBU),JBU) = .TRUE.
-            ID                       =  IUGT(JG)
-            ESTR(JSS(JBU),JBU)       =  EGT(JG)
-            QSTR(JSS(JBU),JBU)       =  QGT(JG)
-            KT                       =  KTWB(JWUGT(JG))
-            JW                       =  JWUGT(JG)
-            CALL DOWNSTREAM_WITHDRAWAL (JSS(JBU))
-            IF (IDGT(JG) /= 0 .AND. US(JBD) == IDGT(JG)) THEN
-              QSUMM = 0.0
-              TSUM  = 0.0
-              CSUM  = 0.0
-              DO K=KT,KB(ID)
-                QSUMM = QSUMM+QNEW(K)
-                TSUM  = TSUM+QNEW(K)*T2(K,ID)
-                DO JC=1,NAC
-                  IF (CAC(NDO) == '      ON' .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
-                    CALL TOTAL_DISSOLVED_GAS(PALT(ID),1,JG,T2(K,ID),CGAS)
-                    CSUM(CN(JC)) = CSUM(CN(JC))+QNEW(K)*CGAS
-                  ELSE
-                    CSUM(CN(JC)) = CSUM(CN(JC))+QNEW(K)*C2(K,ID,CN(JC))
-                  END IF
-                END DO
-              END DO
-              IF (QSUMM /= 0.0) THEN
-                TINSUM(JBD)           = (TSUM           +QINSUM(JBD)*TINSUM(JBD))          /(QSUMM+QINSUM(JBD))
-                CINSUM(CN(1:NAC),JBD) = (CSUM(CN(1:NAC))+QINSUM(JBD)*CINSUM(CN(1:NAC),JBD))/(QSUMM+QINSUM(JBD))
-                QINSUM(JBD)           =  QINSUM(JBD)    +QSUMM
-              END IF
-            END IF
-            QSUM(JB) = 0.0; TSUM = 0.0; CSUM = 0.0
-            DO K=KT,KB(ID)
-              QSUM(JB) = QSUM(JB)+QOUT(K,JB)
-              TSUM     = TSUM+QOUT(K,JB)*T2(K,ID)
-              DO JC=1,NAC
-                IF (CAC(NDO) == '      ON' .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
-                  CALL TOTAL_DISSOLVED_GAS (PALT(ID),1,JG,T2(K,ID),CGAS)
-                  CSUM(CN(JC)) = CSUM(CN(JC))+QOUT(K,JB)*CGAS
-                ELSE
-                  CSUM(CN(JC)) = CSUM(CN(JC))+QOUT(K,JB)*C2(K,ID,CN(JC))
-                END IF
-              END DO
-            END DO
-            IF (QSUM(JB) /= 0.0) THEN
-              TOUT(JB)           = TSUM           /QSUM(JB)
-              COUT(CN(1:NAC),JB) = CSUM(CN(1:NAC))/QSUM(JB)
-            END IF   
-          END IF     
-          IF (IDGT(JG) /= 0) THEN
-            IF (US(JBD) /= IDGT(JG) .OR. HEAD_FLOW(JBD) .OR. UP_HEAD(JBD)) THEN
-              JTT              = JTT+1
-              QTR(JTT)         = QGT(JG)
-              ITR(JTT)         = IDGT(JG)
-              PLACE_QTR(JTT)   = PDGTC(JG) == ' DENSITY'
-              SPECIFY_QTR(JTT) = PDGTC(JG) == ' SPECIFY'
-              IF (SPECIFY_QTR(JTT)) THEN
-                ELTRT(JTT) = ETDGT(JG)
-                ELTRB(JTT) = EBDGT(JG)
-              END IF
-              JBTR(JTT) = JBD
-              IF (JLAT == 1) THEN
-                CSUM(CN(1:NAC)) =  0.0; TSUM = 0.0; QSUMM = 0.0
-                DO K=KTW(JWW),KBW(JWW)
-                  QSUMM           = QSUMM          +QSW(K,JWW)
-                  TSUM            = TSUM           +QSW(K,JWW)*T2(K,IWD(JWW))
-                  CSUM(CN(1:NAC)) = CSUM(CN(1:NAC))+QSW(K,JWW)*C2(K,IWD(JWW),CN(1:NAC))
-                END DO
-                TTR(JTT) = TSUM/QSUMM
-                DO JC=1,NAC
-                  CTR(CN(JC),JTT) = CSUM(CN(JC))/QSUMM
-                  IF (CN(JC) == NDO .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
-                    TDG_GATE(JWW,JG) = .TRUE.
-                    CALL TOTAL_DISSOLVED_GAS (PALT(ID),1,JG,TTR(JTT),CTR(CN(JC),JTT))
-                  END IF
-                END DO
-              ELSE   
-                TTR(JTT) =  TOUT(JB)
-                DO JC=1,NAC
-                  CTR(CN(JC),JTT) = COUT(CN(JC),JB)
-                  IF (CN(JC) == NDO .AND. GASGTC(JS) == '      ON' .AND. QGT(JG) > 0.0) THEN
-                    CALL TOTAL_DISSOLVED_GAS (PALT(ID),0,JS,TTR(JTT),CTR(CN(JC),JTT))
-                  END IF
-                END DO
-              END IF     
-            ELSE IF (CAC(NDO) == '      ON' .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
-              TDG_GATE(JWW,JG) = .TRUE.      
-            ELSE IF (LATERAL_GATE(JG)) THEN
-              TSUM      = 0.0; QSUMM = 0.0; CSUM = 0.0
-              ILAT(JWW) = 1
-              DO K=KTW(JWW),KBW(JWW)
-                QSUMM           = QSUMM          +QSW(K,JWW)
-                TSUM            = TSUM           +QSW(K,JWW)*T2(K,IWD(JWW))
-                CSUM(CN(1:NAC)) = CSUM(CN(1:NAC))+QSW(K,JWW)*C2(K,IWD(JWW),CN(1:NAC))
-              END DO
-              JB                   =  JBD
-              TINSUM(JB)           = (TINSUM(JB)          *QINSUM(JB)+TSUM)           /(QSUMM+QINSUM(JB))
-              CINSUM(CN(1:NAC),JB) = (CINSUM(CN(1:NAC),JB)*QINSUM(JB)+CSUM(CN(1:NAC)))/(QSUMM+QINSUM(JB))
-              QINSUM(JB)           =  QSUMM+QINSUM(JB)
-            END IF   
-          END IF
-        ELSE IF (QGT(JG) < 0.0) THEN
-          JTT              =  JTT+1
-          JWW              =  JWW+1
-          IWD(JWW)         =  IDGT(JG)
-          ITR(JTT)         =  IUGT(JG)
-          QTR(JTT)         = -QGT(JG)
-          QWD(JWW)         = -QGT(JG)
-          KTWD(JWW)        =  KTDGT(JG)
-          KBWD(JWW)        =  KBDGT(JG)
-          EWD(JWW)         =  EGT(JG)
-          PLACE_QTR(JTT)   =  PUGTC(JG) == ' DENSITY'
-          SPECIFY_QTR(JTT) =  PUGTC(JG) == ' SPECIFY'
-          IF (SPECIFY_QTR(JTT)) THEN
-            ELTRT(JTT) = ETUGT(JG)
-            ELTRB(JTT) = EBUGT(JG)
-          END IF
-          JBTR(JTT) = JBU
-          JBWD(JWW) = JBD
-          I         = MAX(CUS(JBWD(JWW)),IWD(JWW))
-          JW        = JWDGT(JG)
-          JB        = JBWD(JWW)
-          KT        = KTWB(JW)
-          CALL LATERAL_WITHDRAWAL (JWW)
-          DO K=KTW(JWW),KBW(JWW)
-            QSS(K,I) = QSS(K,I)-QSW(K,JWW)
-          END DO
-          IF (IDGT(JG) /= 0) THEN
-            CSUM(CN(1:NAC)) = 0.0; TSUM = 0.0; QSUMM = 0.0
-            DO K=KTW(JWW),KBW(JWW)
-              QSUMM           = QSUMM          +QSW(K,JWW)
-              TSUM            = TSUM           +QSW(K,JWW)*T2(K,IWD(JWW))
-              CSUM(CN(1:NAC)) = CSUM(CN(1:NAC))+QSW(K,JWW)*C2(K,IWD(JWW),CN(1:NAC))
-            END DO
-            TTR(JTT) = TSUM/QSUMM
-            DO JC=1,NAC
-              CTR(CN(JC),JTT) = CSUM(CN(JC))/QSUMM
-              IF (CN(JC) == NDO .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
-                TDG_GATE(JWW,JG) = .TRUE.
-                CALL TOTAL_DISSOLVED_GAS (PALT(ID),1,JG,TTR(JTT),CTR(CN(JC),JTT))
-              END IF
-            END DO
-          ELSE IF (CAC(NDO) == '      ON' .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
-            TDG_GATE(JWW,JG) = .TRUE.
-          END IF
-        END IF
-      END DO
-    END IF
+!!
+!!        JLAT = 0
+!!        JBU  = JBUGT(JG)
+!!        JBD  = JBDGT(JG)
+!!        IF (QGT(JG) > 0.0) THEN
+!!          IF (LATERAL_GATE(JG)) THEN
+!!            JLAT      = 1
+!!            JWW       = JWW+1
+!!            IWD(JWW)  = IUGT(JG)
+!!            QWD(JWW)  = QGT(JG)
+!!            KTWD(JWW) = KTUGT(JG)
+!!            KBWD(JWW) = KBUGT(JG)
+!!            EWD(JWW)  = EGT(JG)
+!!            JBWD(JWW) = JBU
+!!            I         = MAX(CUS(JBWD(JWW)),IWD(JWW))
+!!            JW        = JWUGT(JG)
+!!            JB        = JBWD(JWW)
+!!            KT        = KTWB(JW)
+!!            CALL LATERAL_WITHDRAWAL (JWW)
+!!            DO K=KTW(JWW),KBW(JWW)
+!!              QSS(K,I) = QSS(K,I)-QSW(K,JWW)
+!!            END DO
+!!            IF (IDGT(JG) /= 0) THEN
+!!              CSUM(CN(1:NAC)) = 0.0; TSUM = 0.0; QSUMM = 0.0
+!!              DO K=KTW(JWW),KBW(JWW)
+!!                QSUMM           = QSUMM          +QSW(K,JWW)
+!!                TSUM            = TSUM           +QSW(K,JWW)*T2(K,IWD(JWW))
+!!                CSUM(CN(1:NAC)) = CSUM(CN(1:NAC))+QSW(K,JWW)*C2(K,IWD(JWW),CN(1:NAC))
+!!              END DO
+!!              TTR(JTT) = TSUM/QSUMM
+!!              DO JC=1,NAC
+!!                CTR(CN(JC),JTT) = CSUM(CN(JC))/QSUMM
+!!                IF (CN(JC) == NDO .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
+!!                  TDG_GATE(JWW,JG) = .TRUE.
+!!                  CALL TOTAL_DISSOLVED_GAS (PALT(ID),1,JG,TTR(JTT),CTR(CN(JC),JTT))
+!!                END IF
+!!              END DO
+!!            ELSE IF (CAC(NDO) == '      ON' .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
+!!              TDG_GATE(JWW,JG) = .TRUE.
+!!            END IF
+!!          ELSE
+!!            JSS(JBU)                 =  JSS(JBU)+1
+!!            KTSW(JSS(JBU),JBU)       =  KTUGT(JG)
+!!            KBSW(JSS(JBU),JBU)       =  KBUGT(JG)
+!!            JB                       =  JBU
+!!            POINT_SINK(JSS(JBU),JBU) = .TRUE.
+!!            ID                       =  IUGT(JG)
+!!            ESTR(JSS(JBU),JBU)       =  EGT(JG)
+!!            QSTR(JSS(JBU),JBU)       =  QGT(JG)
+!!            KT                       =  KTWB(JWUGT(JG))
+!!            JW                       =  JWUGT(JG)
+!!            CALL DOWNSTREAM_WITHDRAWAL (JSS(JBU))
+!!            IF (IDGT(JG) /= 0 .AND. US(JBD) == IDGT(JG)) THEN
+!!              QSUMM = 0.0
+!!              TSUM  = 0.0
+!!              CSUM  = 0.0
+!!              DO K=KT,KB(ID)
+!!                QSUMM = QSUMM+QNEW(K)
+!!                TSUM  = TSUM+QNEW(K)*T2(K,ID)
+!!                DO JC=1,NAC
+!!                  IF (CAC(NDO) == '      ON' .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
+!!                    CALL TOTAL_DISSOLVED_GAS(PALT(ID),1,JG,T2(K,ID),CGAS)
+!!                    CSUM(CN(JC)) = CSUM(CN(JC))+QNEW(K)*CGAS
+!!                  ELSE
+!!                    CSUM(CN(JC)) = CSUM(CN(JC))+QNEW(K)*C2(K,ID,CN(JC))
+!!                  END IF
+!!                END DO
+!!              END DO
+!!              IF (QSUMM /= 0.0) THEN
+!!                TINSUM(JBD)           = (TSUM           +QINSUM(JBD)*TINSUM(JBD))          /(QSUMM+QINSUM(JBD))
+!!                CINSUM(CN(1:NAC),JBD) = (CSUM(CN(1:NAC))+QINSUM(JBD)*CINSUM(CN(1:NAC),JBD))/(QSUMM+QINSUM(JBD))
+!!                QINSUM(JBD)           =  QINSUM(JBD)    +QSUMM
+!!              END IF
+!!            END IF
+!!            QSUM(JB) = 0.0; TSUM = 0.0; CSUM = 0.0
+!!            DO K=KT,KB(ID)
+!!              QSUM(JB) = QSUM(JB)+QOUT(K,JB)
+!!              TSUM     = TSUM+QOUT(K,JB)*T2(K,ID)
+!!              DO JC=1,NAC
+!!                IF (CAC(NDO) == '      ON' .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
+!!                  CALL TOTAL_DISSOLVED_GAS (PALT(ID),1,JG,T2(K,ID),CGAS)
+!!                  CSUM(CN(JC)) = CSUM(CN(JC))+QOUT(K,JB)*CGAS
+!!                ELSE
+!!                  CSUM(CN(JC)) = CSUM(CN(JC))+QOUT(K,JB)*C2(K,ID,CN(JC))
+!!                END IF
+!!              END DO
+!!            END DO
+!!            IF (QSUM(JB) /= 0.0) THEN
+!!              TOUT(JB)           = TSUM           /QSUM(JB)
+!!              COUT(CN(1:NAC),JB) = CSUM(CN(1:NAC))/QSUM(JB)
+!!            END IF   
+!!          END IF     
+!!          IF (IDGT(JG) /= 0) THEN
+!!            IF (US(JBD) /= IDGT(JG) .OR. HEAD_FLOW(JBD) .OR. UP_HEAD(JBD)) THEN
+!!              JTT              = JTT+1
+!!              QTR(JTT)         = QGT(JG)
+!!              ITR(JTT)         = IDGT(JG)
+!!              PLACE_QTR(JTT)   = PDGTC(JG) == ' DENSITY'
+!!              SPECIFY_QTR(JTT) = PDGTC(JG) == ' SPECIFY'
+!!              IF (SPECIFY_QTR(JTT)) THEN
+!!                ELTRT(JTT) = ETDGT(JG)
+!!                ELTRB(JTT) = EBDGT(JG)
+!!              END IF
+!!              JBTR(JTT) = JBD
+!!              IF (JLAT == 1) THEN
+!!                CSUM(CN(1:NAC)) =  0.0; TSUM = 0.0; QSUMM = 0.0
+!!                DO K=KTW(JWW),KBW(JWW)
+!!                  QSUMM           = QSUMM          +QSW(K,JWW)
+!!                  TSUM            = TSUM           +QSW(K,JWW)*T2(K,IWD(JWW))
+!!                  CSUM(CN(1:NAC)) = CSUM(CN(1:NAC))+QSW(K,JWW)*C2(K,IWD(JWW),CN(1:NAC))
+!!                END DO
+!!                TTR(JTT) = TSUM/QSUMM
+!!                DO JC=1,NAC
+!!                  CTR(CN(JC),JTT) = CSUM(CN(JC))/QSUMM
+!!                  IF (CN(JC) == NDO .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
+!!                    TDG_GATE(JWW,JG) = .TRUE.
+!!                    CALL TOTAL_DISSOLVED_GAS (PALT(ID),1,JG,TTR(JTT),CTR(CN(JC),JTT))
+!!                  END IF
+!!                END DO
+!!              ELSE   
+!!                TTR(JTT) =  TOUT(JB)
+!!                DO JC=1,NAC
+!!                  CTR(CN(JC),JTT) = COUT(CN(JC),JB)
+!!                  IF (CN(JC) == NDO .AND. GASGTC(JS) == '      ON' .AND. QGT(JG) > 0.0) THEN
+!!                    CALL TOTAL_DISSOLVED_GAS (PALT(ID),0,JS,TTR(JTT),CTR(CN(JC),JTT))
+!!                  END IF
+!!                END DO
+!!              END IF     
+!!            ELSE IF (CAC(NDO) == '      ON' .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
+!!              TDG_GATE(JWW,JG) = .TRUE.      
+!!            ELSE IF (LATERAL_GATE(JG)) THEN
+!!              TSUM      = 0.0; QSUMM = 0.0; CSUM = 0.0
+!!              ILAT(JWW) = 1
+!!              DO K=KTW(JWW),KBW(JWW)
+!!                QSUMM           = QSUMM          +QSW(K,JWW)
+!!                TSUM            = TSUM           +QSW(K,JWW)*T2(K,IWD(JWW))
+!!                CSUM(CN(1:NAC)) = CSUM(CN(1:NAC))+QSW(K,JWW)*C2(K,IWD(JWW),CN(1:NAC))
+!!              END DO
+!!              JB                   =  JBD
+!!              TINSUM(JB)           = (TINSUM(JB)          *QINSUM(JB)+TSUM)           /(QSUMM+QINSUM(JB))
+!!              CINSUM(CN(1:NAC),JB) = (CINSUM(CN(1:NAC),JB)*QINSUM(JB)+CSUM(CN(1:NAC)))/(QSUMM+QINSUM(JB))
+!!              QINSUM(JB)           =  QSUMM+QINSUM(JB)
+!!            END IF   
+!!          END IF
+!!        ELSE IF (QGT(JG) < 0.0) THEN
+!!          JTT              =  JTT+1
+!!          JWW              =  JWW+1
+!!          IWD(JWW)         =  IDGT(JG)
+!!          ITR(JTT)         =  IUGT(JG)
+!!          QTR(JTT)         = -QGT(JG)
+!!          QWD(JWW)         = -QGT(JG)
+!!          KTWD(JWW)        =  KTDGT(JG)
+!!          KBWD(JWW)        =  KBDGT(JG)
+!!          EWD(JWW)         =  EGT(JG)
+!!          PLACE_QTR(JTT)   =  PUGTC(JG) == ' DENSITY'
+!!          SPECIFY_QTR(JTT) =  PUGTC(JG) == ' SPECIFY'
+!!          IF (SPECIFY_QTR(JTT)) THEN
+!!            ELTRT(JTT) = ETUGT(JG)
+!!            ELTRB(JTT) = EBUGT(JG)
+!!          END IF
+!!          JBTR(JTT) = JBU
+!!          JBWD(JWW) = JBD
+!!          I         = MAX(CUS(JBWD(JWW)),IWD(JWW))
+!!          JW        = JWDGT(JG)
+!!          JB        = JBWD(JWW)
+!!          KT        = KTWB(JW)
+!!          CALL LATERAL_WITHDRAWAL (JWW)
+!!          DO K=KTW(JWW),KBW(JWW)
+!!            QSS(K,I) = QSS(K,I)-QSW(K,JWW)
+!!          END DO
+!!          IF (IDGT(JG) /= 0) THEN
+!!            CSUM(CN(1:NAC)) = 0.0; TSUM = 0.0; QSUMM = 0.0
+!!            DO K=KTW(JWW),KBW(JWW)
+!!              QSUMM           = QSUMM          +QSW(K,JWW)
+!!              TSUM            = TSUM           +QSW(K,JWW)*T2(K,IWD(JWW))
+!!              CSUM(CN(1:NAC)) = CSUM(CN(1:NAC))+QSW(K,JWW)*C2(K,IWD(JWW),CN(1:NAC))
+!!            END DO
+!!            TTR(JTT) = TSUM/QSUMM
+!!            DO JC=1,NAC
+!!              CTR(CN(JC),JTT) = CSUM(CN(JC))/QSUMM
+!!              IF (CN(JC) == NDO .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
+!!                TDG_GATE(JWW,JG) = .TRUE.
+!!                CALL TOTAL_DISSOLVED_GAS (PALT(ID),1,JG,TTR(JTT),CTR(CN(JC),JTT))
+!!              END IF
+!!            END DO
+!!          ELSE IF (CAC(NDO) == '      ON' .AND. GASGTC(JG) == '      ON' .AND. QGT(JG) > 0.0) THEN
+!!            TDG_GATE(JWW,JG) = .TRUE.
+!!          END IF
+!!        END IF
+!!      END DO
+!!    END IF
     DO JW=1,NWB
       KT = KTWB(JW)
       DO JB=BS(JW),BE(JW)
@@ -7539,8 +7584,8 @@ PROGRAM CE_QUAL_W2
   CALL DEALLOCATE_TRANSPORT
   CALL DEALLOCATE_KINETICS
   CALL DEALLOCATE_WATERBODY
-  CALL DEALLOCATE_PIPE_FLOW
-  CALL DEALLOCATE_OPEN_CHANNEL
+!!  CALL DEALLOCATE_PIPE_FLOW
+!!  CALL DEALLOCATE_OPEN_CHANNEL
 240 CONTINUE
   WRITE (*,'(A)') TEXT
 
@@ -7680,7 +7725,8 @@ END FUNCTION DENSITY
 
 SUBROUTINE TIME_VARYING_DATA
   USE GLOBAL;  USE SURFHE; USE SCREENC; USE TVDC; USE LOGICC; USE SELWC; USE STRUCTURES; USE NAMESC
-  USE KINETIC, ONLY:EXH2O; USE SHADEC 
+!!  USE KINETIC, ONLY:EXH2O; USE SHADEC 
+  USE KINETIC;  USE SHADEC 
 
 ! Type declaration
 
@@ -11953,7 +11999,8 @@ END SUBROUTINE OUTPUT
 
 SUBROUTINE RESTART_OUTPUT (RSOFN)
 !  USE GLOBAL; USE SCREENC; USE RSTART; USE GDAYC; USE GEOMC; USE KINETIC, ONLY:EPM, EPD; USE TVDC, ONLY:QSUM; USE KINETIC, ONLY:SED
-  USE GLOBAL; USE SCREENC; USE RSTART; USE GDAYC; USE GEOMC; USE KINETIC, ONLY:EPM,EPD,SEDC,SEDN,SEDP,PH, sdkv; USE TVDC, ONLY:QSUM !MLM 6/10/07;10/06
+!  USE GLOBAL; USE SCREENC; USE RSTART; USE GDAYC; USE GEOMC; USE KINETIC, ONLY:EPM,EPD,SEDC,SEDN,SEDP,PH, sdkv; USE TVDC, ONLY:QSUM !MLM 6/10/07;10/06
+  USE GLOBAL; USE SCREENC; USE RSTART; USE GDAYC; USE GEOMC; USE KINETIC, ONLY:EPM,EPD,SEDC,SEDN,SEDP,PH, sdkv; USE TVDC
   USE KINETIC, ONLY:SED ; USE ZOOPLANKTONC, ONLY: ZOO; USE EDDY, ONLY:TKE                      !MLM 10/06  ! SW 10/5/07
   CHARACTER(*) :: RSOFN
   OPEN  (RSO,FILE=RSOFN,FORM='UNFORMATTED',STATUS='UNKNOWN')
@@ -12744,83 +12791,83 @@ END SUBROUTINE WATERBODY
 !**                                          S U B R O U T I N E   G A T E  F L O W                                               **
 !***********************************************************************************************************************************
 
-SUBROUTINE GATE_FLOW
-  USE STRUCTURES; USE GLOBAL; USE GEOMC
-
-  DO JG=1,NGT
-   if(dyngtc(jg) == '    FLOW')then    ! V3.5   
-    QGT(JG) = BGT(JG)
-   else  
-
-    ELIU =  EL(KTWB(JWUGT(JG)),IUGT(JG))-Z(IUGT(JG))*COSA(BS(JWUGT(JG)))
-    IF (LATERAL_GATE(JG)) THEN   
-      ELIU =  EL(KTWB(JWUGT(JG)),IUGT(JG))-Z(IUGT(JG))*COSA(BS(JWUGT(JG)))
-    ELSE   
-      ELIU=EL(KTWB(JWUGT(JG)),IUGT(JG))-Z(IUGT(JG))*COSA(BS(JWUGT(JG)))-SINA(JBUGT(JG))*DLX(IUGT(JG))*0.5
-    END IF  
-    IF (IDGT(JG) /= 0)THEN
-      IF (US(JBDGT(JG)) /= IDGT(JG)) THEN
-        ELID = EL(KTWB(JWDGT(JG)),IDGT(JG))-Z(IDGT(JG))*COSA(BS(JWDGT(JG)))
-      ELSE   
-        ELID = EL(KTWB(JWDGT(JG)),IDGT(JG))-Z(IDGT(JG))*COSA(BS(JWDGT(JG)))+SINA(JBDGT(JG))*DLX(IDGT(JG))*0.5
-      END IF
-    ELSE   
-      ELID = -100.0
-    END IF
-    IF (BGT(JG) /= 0.0) THEN
-      IF (ELID > EGT(JG) .OR. ELIU > EGT(JG)) THEN
-        ISUB = 0
-        IF (A2GT(JG) /= 0.0 .AND. IDGT(JG) /= 0.0) THEN
-          HTAIL =  ELID-EGT(JG)                                                          ! SW 5/10/05
-          IF (HTAIL > 0) THEN
-            HENERGY = (U(KTWB(JWUGT(JG)),IUGT(JG))**2)/(2.0*G)+ELIU-EGT(JG)              ! SW 5/10/05
-            IF (HTAIL/HENERGY > 0.67) ISUB = 1
-          END IF
-        END IF
-        IGT = 0
-        IF (BGT(JG) >= 0.8*(ELIU-EGT(JG)) .AND. GTA1(JG) /= 0.0) IGT = 1
-        IF (IGT == 0) THEN
-          IF (ISUB == 0) THEN
-            DLEL = ELIU-EGT(JG)
-            IF (A2GT(JG) == 0.0 .AND. G2GT(JG) /= 0.0) DLEL = ELIU-G2GT(JG)
-            IF (DLEL < 0.0) THEN
-              DLEL    = -DLEL
-              QGT(JG) = -A1GT(JG)*(DLEL**B1GT(JG))*BGT(JG)**G1GT(JG)
-            ELSE
-              QGT(JG) =  A1GT(JG)*(DLEL**B1GT(JG))*BGT(JG)**G1GT(JG)
-            END IF
-          ELSE IF (ELID > ELIU) THEN
-            DLEL    =  ELID-ELIU
-            QGT(JG) = -A2GT(JG)*DLEL**B2GT(JG)*BGT(JG)**G2GT(JG)
-          ELSE
-            DLEL    =  ELIU-ELID
-            QGT(JG) =  A2GT(JG)*DLEL**B2GT(JG)*BGT(JG)**G2GT(JG)
-          END IF
-        ELSE IF (ISUB == 0) THEN
-          DLEL = ELIU-EGT(JG)
-          IF (ELID > EGT(JG)) DLEL = ELIU-ELID
-          IF (DLEL < 0.0) THEN
-            DLEL    = -DLEL
-            QGT(JG) = -GTA1(JG)*DLEL**GTB1(JG)
-          ELSE
-            QGT(JG) =  GTA1(JG)*DLEL**GTB1(JG)
-          END IF
-        ELSE IF (ELID > ELIU) THEN
-          DLEL    =  ELID-ELIU
-          QGT(JG) = -GTA2(JG)*DLEL**GTB2(JG)
-        ELSE
-          DLEL    =  ELIU-ELID
-          QGT(JG) =  GTA2(JG)*DLEL**GTB2(JG)
-        END IF
-      ELSE
-        QGT(JG) = 0.0
-      END IF
-    ELSE
-      QGT(JG) = 0.0
-    END IF
-   endif
-  END DO
-END SUBROUTINE GATE_FLOW
+!!SUBROUTINE GATE_FLOW
+!!  USE STRUCTURES; USE GLOBAL; USE GEOMC
+!!
+!!  DO JG=1,NGT
+!!   if(dyngtc(jg) == '    FLOW')then    ! V3.5   
+!!    QGT(JG) = BGT(JG)
+!!   else  
+!!
+!!    ELIU =  EL(KTWB(JWUGT(JG)),IUGT(JG))-Z(IUGT(JG))*COSA(BS(JWUGT(JG)))
+!!    IF (LATERAL_GATE(JG)) THEN   
+!!      ELIU =  EL(KTWB(JWUGT(JG)),IUGT(JG))-Z(IUGT(JG))*COSA(BS(JWUGT(JG)))
+!!    ELSE   
+!!      ELIU=EL(KTWB(JWUGT(JG)),IUGT(JG))-Z(IUGT(JG))*COSA(BS(JWUGT(JG)))-SINA(JBUGT(JG))*DLX(IUGT(JG))*0.5
+!!    END IF  
+!!    IF (IDGT(JG) /= 0)THEN
+!!      IF (US(JBDGT(JG)) /= IDGT(JG)) THEN
+!!        ELID = EL(KTWB(JWDGT(JG)),IDGT(JG))-Z(IDGT(JG))*COSA(BS(JWDGT(JG)))
+!!      ELSE   
+!!        ELID = EL(KTWB(JWDGT(JG)),IDGT(JG))-Z(IDGT(JG))*COSA(BS(JWDGT(JG)))+SINA(JBDGT(JG))*DLX(IDGT(JG))*0.5
+!!      END IF
+!!    ELSE   
+!!      ELID = -100.0
+!!    END IF
+!!    IF (BGT(JG) /= 0.0) THEN
+!!      IF (ELID > EGT(JG) .OR. ELIU > EGT(JG)) THEN
+!!        ISUB = 0
+!!        IF (A2GT(JG) /= 0.0 .AND. IDGT(JG) /= 0.0) THEN
+!!          HTAIL =  ELID-EGT(JG)                                                          ! SW 5/10/05
+!!          IF (HTAIL > 0) THEN
+!!            HENERGY = (U(KTWB(JWUGT(JG)),IUGT(JG))**2)/(2.0*G)+ELIU-EGT(JG)              ! SW 5/10/05
+!!            IF (HTAIL/HENERGY > 0.67) ISUB = 1
+!!          END IF
+!!        END IF
+!!        IGT = 0
+!!        IF (BGT(JG) >= 0.8*(ELIU-EGT(JG)) .AND. GTA1(JG) /= 0.0) IGT = 1
+!!        IF (IGT == 0) THEN
+!!          IF (ISUB == 0) THEN
+!!            DLEL = ELIU-EGT(JG)
+!!            IF (A2GT(JG) == 0.0 .AND. G2GT(JG) /= 0.0) DLEL = ELIU-G2GT(JG)
+!!            IF (DLEL < 0.0) THEN
+!!              DLEL    = -DLEL
+!!              QGT(JG) = -A1GT(JG)*(DLEL**B1GT(JG))*BGT(JG)**G1GT(JG)
+!!            ELSE
+!!              QGT(JG) =  A1GT(JG)*(DLEL**B1GT(JG))*BGT(JG)**G1GT(JG)
+!!            END IF
+!!          ELSE IF (ELID > ELIU) THEN
+!!            DLEL    =  ELID-ELIU
+!!            QGT(JG) = -A2GT(JG)*DLEL**B2GT(JG)*BGT(JG)**G2GT(JG)
+!!          ELSE
+!!            DLEL    =  ELIU-ELID
+!!            QGT(JG) =  A2GT(JG)*DLEL**B2GT(JG)*BGT(JG)**G2GT(JG)
+!!          END IF
+!!        ELSE IF (ISUB == 0) THEN
+!!          DLEL = ELIU-EGT(JG)
+!!          IF (ELID > EGT(JG)) DLEL = ELIU-ELID
+!!          IF (DLEL < 0.0) THEN
+!!            DLEL    = -DLEL
+!!            QGT(JG) = -GTA1(JG)*DLEL**GTB1(JG)
+!!          ELSE
+!!            QGT(JG) =  GTA1(JG)*DLEL**GTB1(JG)
+!!          END IF
+!!        ELSE IF (ELID > ELIU) THEN
+!!          DLEL    =  ELID-ELIU
+!!          QGT(JG) = -GTA2(JG)*DLEL**GTB2(JG)
+!!        ELSE
+!!          DLEL    =  ELIU-ELID
+!!          QGT(JG) =  GTA2(JG)*DLEL**GTB2(JG)
+!!        END IF
+!!      ELSE
+!!        QGT(JG) = 0.0
+!!      END IF
+!!    ELSE
+!!      QGT(JG) = 0.0
+!!    END IF
+!!   endif
+!!  END DO
+!!END SUBROUTINE GATE_FLOW
 
 !***********************************************************************************************************************************
 !**                                         S U B R O U T I N E   S P I L L W A Y  F L O W                                        **
@@ -12878,400 +12925,401 @@ END SUBROUTINE SPILLWAY_FLOW
 !**                                            S U B R O U T I N E   P I P E  F L O W                                             **
 !***********************************************************************************************************************************
 
-SUBROUTINE PIPE_FLOW_INITIALIZE
-  USE GLOBAL; USE GEOMC; USE STRUCTURES
-  REAL :: JDAY
-  SAVE
+!!SUBROUTINE PIPE_FLOW_INITIALIZE
+!!  USE GLOBAL; USE GEOMC; USE STRUCTURES
+!!  REAL :: JDAY
+!!  SAVE
 
-  ALLOCATE (BEGIN(NPI), WLFLAG(NPI), VMAX(NPI))
-  QOLD   =  0.01;  VMAX   =  0.01
-  BEGIN  = .TRUE.; WLFLAG = .TRUE.
-RETURN
+!!  ALLOCATE (BEGIN(NPI), WLFLAG(NPI), VMAX(NPI))
+!!  QOLD   =  0.01;  VMAX   =  0.01
+!!  BEGIN  = .TRUE.; WLFLAG = .TRUE.
+!!RETURN
 
-ENTRY PIPE_FLOW (NIT,JDAY)
-  DTQ = DLT/10.0
-  DO JP=1,NPI
-    DIA   = WPI(JP)
-    CLEN  = DLXPI(JP)
-    FMAN  = FPI(JP)
-    CLOSS = FMINPI(JP)
-    UPIE  = EUPI(JP)
-    DNIE  = EDPI(JP)
-    DLTX  = CLEN/(REAL(NC-1)*0.5)
-    IF (LATERAL_PIPE(JP)) THEN   
-      EL1   = EL(KTWB(JWUPI(JP)),IUPI(JP))-Z(IUPI(JP))*COSA(JBUPI(JP))
-    ELSE
-      EL1   = EL(KTWB(JWUPI(JP)),IUPI(JP))-Z(IUPI(JP))*COSA(JBUPI(JP))-SINA(JBDPI(JP))*DLX(IUPI(JP))*0.5
-    END IF
-    IF (IDPI(JP) /= 0) THEN
-      IF (US(JBDPI(JP)) /= IDPI(JP)) THEN
-        EL2   = EL(KTWB(JWDPI(JP)),IDPI(JP))-Z(IDPI(JP))*COSA(JBDPI(JP))
-      ELSE
-        EL2   = EL(KTWB(JWDPI(JP)),IDPI(JP))-Z(IDPI(JP))*COSA(JBDPI(JP))+SINA(JBDPI(JP))*DLX(IDPI(JP))*0.5
-      END IF
-    ELSE
-      EL2 = -1.0
-    END IF
-    HIE = MAX(UPIE,DNIE)
-    IF (DIA == 0.0) THEN
-      QPI(JP)    =  0.0
-      WLFLAG(JP) = .TRUE.
-      GO TO 140
-    END IF
-    EPS = 0.001
-    IF ((HIE+EPS) >= EL1 .AND. (HIE+EPS) >= EL2) THEN
-      QPI(JP)    =  0.0
-      WLFLAG(JP) = .TRUE.
-      GO TO 140
-    END IF
-    IF (EL1 > EL2) THEN
-      DCHECK = EL1-UPIE
-    ELSE
-      DCHECK = EL2-DNIE
-    END IF
-    IF (DCHECK < 0.02) THEN
-      QPI(JP)    =  0.0
-      WLFLAG(JP) = .TRUE.
-      GO TO 140
-    END IF
-    IF (ABS(QOLD(JP)) < 0.001) QOLD(JP) = 0.001
-    IF (EL1 >= (UPIE+DIA) .AND. EL2 >= (DNIE+DIA)) THEN
-      D1 = EL1
-      D2 = EL2
-      GO TO 120
-    END IF
-    IF (EL1 > EL2) THEN
-      DTEST = EL2-DNIE
-    ELSE
-      DTEST = EL1-UPIE
-    END IF
-    DCRIT = DEPTHCRIT(ABS(QOLD(JP)))
-    IF (DTEST <= DCRIT) THEN
-      IF (EL1 <= EL2) THEN
-        D1 = UPIE+DCRIT
-        D2 = EL2
-      ELSE
-        D1 = EL1
-        D2 = DNIE+DCRIT
-      END IF
-      VTOT = 0.0
-      TOTT = 0.0
-110   CONTINUE
-      IF (NIT /= 0) THEN
-        DTQ = OMEGA*DLTX/VMAX(JP)
-        IF (DTQ > (DLT-TOTT)) THEN
-          DTQ = DLT-TOTT
-        ELSE IF ((2.0*DTQ) > (DLT-TOTT)) THEN
-          DTQ = (DLT-TOTT)*0.5
-        END IF
-      END IF
-      CALL OPEN_CHANNEL (D1,D2,QPI(JP),JP,DTQ,JDAY)
-      DCRIT = DEPTHCRIT(ABS(QPI(JP)))
-      IF (EL1 <= EL2) THEN
-        D1 = UPIE+DCRIT
-      ELSE
-        D2 = DNIE+DCRIT
-      END IF
-      VTOT = VTOT+DTQ*QPI(JP)
-      TOTT = DTQ+TOTT
-      IF (TOTT < (DLT-EPS2)) GO TO 110
-      QPI(JP) = VTOT/DLT
-      GO TO 140
-    END IF
-    D1 = EL1
-    D2 = EL2
-120 CONTINUE
-    TOTT = 0.0
-    VTOT = 0.0
-130 CONTINUE
-    IF (NIT /= 0) THEN
-      DTQ = OMEGA*DLTX/VMAX(JP)
-      IF (DTQ > (DLT-TOTT)) THEN
-        DTQ = DLT-TOTT
-      ELSE IF ((2.0*DTQ) > (DLT-TOTT)) THEN
-        DTQ = (DLT-TOTT)*0.5
-      END IF
-    END IF
-    CALL OPEN_CHANNEL (D1,D2,QPI(JP),JP,DTQ,JDAY)
-    VTOT = VTOT+DTQ*QPI(JP)
-    TOTT = DTQ+TOTT
-    IF (TOTT < (DLT-EPS2)) GO TO 130
-    QPI(JP) = VTOT/DLT
-140 CONTINUE
-    QOLD(JP) = QPI(JP)
-    IF (QPI(JP) == 0.0) WLFLAG(JP) = .TRUE.
-  END DO
-RETURN
-ENTRY DEALLOCATE_PIPE_FLOW
-  DEALLOCATE (BEGIN, WLFLAG, VMAX)
-RETURN
-END SUBROUTINE PIPE_FLOW_INITIALIZE
+!!ENTRY PIPE_FLOW (NIT,JDAY)
+!!  DTQ = DLT/10.0
+!!  DO JP=1,NPI
+!!    DIA   = WPI(JP)
+!!    CLEN  = DLXPI(JP)
+!!    FMAN  = FPI(JP)
+!!    CLOSS = FMINPI(JP)
+!!    UPIE  = EUPI(JP)
+!!    DNIE  = EDPI(JP)
+!!    DLTX  = CLEN/(REAL(NC-1)*0.5)
+!!    IF (LATERAL_PIPE(JP)) THEN   
+!!      EL1   = EL(KTWB(JWUPI(JP)),IUPI(JP))-Z(IUPI(JP))*COSA(JBUPI(JP))
+!!    ELSE
+!!      EL1   = EL(KTWB(JWUPI(JP)),IUPI(JP))-Z(IUPI(JP))*COSA(JBUPI(JP))-SINA(JBDPI(JP))*DLX(IUPI(JP))*0.5
+!!    END IF
+!!    IF (IDPI(JP) /= 0) THEN
+!!      IF (US(JBDPI(JP)) /= IDPI(JP)) THEN
+!!        EL2   = EL(KTWB(JWDPI(JP)),IDPI(JP))-Z(IDPI(JP))*COSA(JBDPI(JP))
+!!      ELSE
+!!        EL2   = EL(KTWB(JWDPI(JP)),IDPI(JP))-Z(IDPI(JP))*COSA(JBDPI(JP))+SINA(JBDPI(JP))*DLX(IDPI(JP))*0.5
+!!      END IF
+!!    ELSE
+!!      EL2 = -1.0
+!!    END IF
+!!    HIE = MAX(UPIE,DNIE)
+!!    IF (DIA == 0.0) THEN
+!!      QPI(JP)    =  0.0
+!!      WLFLAG(JP) = .TRUE.
+!!      GO TO 140
+!!    END IF
+!!    EPS = 0.001
+!!    IF ((HIE+EPS) >= EL1 .AND. (HIE+EPS) >= EL2) THEN
+!!      QPI(JP)    =  0.0
+!!      WLFLAG(JP) = .TRUE.
+!!      GO TO 140
+!!    END IF
+!!    IF (EL1 > EL2) THEN
+!!      DCHECK = EL1-UPIE
+!!    ELSE
+!!      DCHECK = EL2-DNIE
+!!    END IF
+!!    IF (DCHECK < 0.02) THEN
+!!      QPI(JP)    =  0.0
+!!      WLFLAG(JP) = .TRUE.
+!!      GO TO 140
+!!    END IF
+!!    IF (ABS(QOLD(JP)) < 0.001) QOLD(JP) = 0.001
+!!    IF (EL1 >= (UPIE+DIA) .AND. EL2 >= (DNIE+DIA)) THEN
+!!      D1 = EL1
+!!      D2 = EL2
+!!      GO TO 120
+!!    END IF
+!!    IF (EL1 > EL2) THEN
+!!      DTEST = EL2-DNIE
+!!    ELSE
+!!      DTEST = EL1-UPIE
+!!    END IF
+!!    DCRIT = DEPTHCRIT(ABS(QOLD(JP)))
+!!    IF (DTEST <= DCRIT) THEN
+!!      IF (EL1 <= EL2) THEN
+!!        D1 = UPIE+DCRIT
+!!        D2 = EL2
+!!      ELSE
+!!        D1 = EL1
+!!        D2 = DNIE+DCRIT
+!!      END IF
+!!      VTOT = 0.0
+!!      TOTT = 0.0
+!!110   CONTINUE
+!!      IF (NIT /= 0) THEN
+!!        DTQ = OMEGA*DLTX/VMAX(JP)
+!!        IF (DTQ > (DLT-TOTT)) THEN
+!!          DTQ = DLT-TOTT
+!!        ELSE IF ((2.0*DTQ) > (DLT-TOTT)) THEN
+!!          DTQ = (DLT-TOTT)*0.5
+!!        END IF
+!!      END IF
+!!      CALL OPEN_CHANNEL (D1,D2,QPI(JP),JP,DTQ,JDAY)
+!!      DCRIT = DEPTHCRIT(ABS(QPI(JP)))
+!!      IF (EL1 <= EL2) THEN
+!!        D1 = UPIE+DCRIT
+!!      ELSE
+!!        D2 = DNIE+DCRIT
+!!      END IF
+!!      VTOT = VTOT+DTQ*QPI(JP)
+!!      TOTT = DTQ+TOTT
+!!      IF (TOTT < (DLT-EPS2)) GO TO 110
+!!      QPI(JP) = VTOT/DLT
+!!      GO TO 140
+!!    END IF
+!!    D1 = EL1
+!!    D2 = EL2
+!!120 CONTINUE
+!!    TOTT = 0.0
+!!    VTOT = 0.0
+!!130 CONTINUE
+!!    IF (NIT /= 0) THEN
+!!      DTQ = OMEGA*DLTX/VMAX(JP)
+!!      IF (DTQ > (DLT-TOTT)) THEN
+!!        DTQ = DLT-TOTT
+!!      ELSE IF ((2.0*DTQ) > (DLT-TOTT)) THEN
+!!        DTQ = (DLT-TOTT)*0.5
+!!      END IF
+!!    END IF
+!!    CALL OPEN_CHANNEL (D1,D2,QPI(JP),JP,DTQ,JDAY)
+!!    VTOT = VTOT+DTQ*QPI(JP)
+!!    TOTT = DTQ+TOTT
+!!    IF (TOTT < (DLT-EPS2)) GO TO 130
+!!    QPI(JP) = VTOT/DLT
+!!140 CONTINUE
+!!    QOLD(JP) = QPI(JP)
+!!    IF (QPI(JP) == 0.0) WLFLAG(JP) = .TRUE.
+!!  END DO
+!!RETURN
+!!ENTRY DEALLOCATE_PIPE_FLOW
+!!  DEALLOCATE (BEGIN, WLFLAG, VMAX)
+!!RETURN
+!!END SUBROUTINE PIPE_FLOW_INITIALIZE
 
 !***********************************************************************************************************************************
 !**                                        S U B R O U T I N E   O P E N  C H A N N E L                                           **
 !***********************************************************************************************************************************
 
-SUBROUTINE OPEN_CHANNEL_INITIALIZE
-  USE GLOBAL; USE STRUCTURES
-  REAL, PARAMETER :: THETA=0.55
-
+!!SUBROUTINE OPEN_CHANNEL_INITIALIZE
+!!  USE GLOBAL; USE STRUCTURES
+!!  REAL, PARAMETER :: THETA=0.55
+!!
+!!
 ! Type declarations
-
-  REAL                                 :: JDAY
-  REAL,    ALLOCATABLE, DIMENSION(:)   :: Y,   D,  B,   V,   CAREA, TOPW,  BELEV, Q, VOLD, YOLD
-  REAL,    ALLOCATABLE, DIMENSION(:)   :: YT,  VT, VPR, YPR, TAREA, TOPWT, RT
-  REAL,    ALLOCATABLE, DIMENSION(:,:) :: DAA, AL     
-  INTEGER, ALLOCATABLE, DIMENSION(:)   :: INDX
-  LOGICAL                              :: SMOOTH_WATER_LEVELS, OPENWRN
-  SAVE
-
+!!
+!!  REAL                                 :: JDAY
+!!  REAL,    ALLOCATABLE, DIMENSION(:)   :: Y,   D,  B,   V,   CAREA, TOPW,  BELEV, Q, VOLD, YOLD
+!!  REAL,    ALLOCATABLE, DIMENSION(:)   :: YT,  VT, VPR, YPR, TAREA, TOPWT, RT
+!!  REAL,    ALLOCATABLE, DIMENSION(:,:) :: DAA, AL     
+!!  INTEGER, ALLOCATABLE, DIMENSION(:)   :: INDX
+!!  LOGICAL                              :: SMOOTH_WATER_LEVELS, OPENWRN
+!!  SAVE
+!!
 ! Allocation declarations
+!!
+!!  ALLOCATE (Y(NN),    V(NN),     CAREA(NN),  TOPW(NN),   BELEV(NN),  Q(NN),     VOLD(NN), YOLD(NN), D(NN), B(NN))
+!!  ALLOCATE (YT(NN),   VT(NN),    VPR(NN),    YPR(NN),    TAREA(NN),  TOPWT(NN), RT(NN),   INDX(NN))     
+!!  ALLOCATE (AL(NN,2), DAA(NN,NN))     
+!!RETURN
 
-  ALLOCATE (Y(NN),    V(NN),     CAREA(NN),  TOPW(NN),   BELEV(NN),  Q(NN),     VOLD(NN), YOLD(NN), D(NN), B(NN))
-  ALLOCATE (YT(NN),   VT(NN),    VPR(NN),    YPR(NN),    TAREA(NN),  TOPWT(NN), RT(NN),   INDX(NN))     
-  ALLOCATE (AL(NN,2), DAA(NN,NN))     
-RETURN
-
-ENTRY OPEN_CHANNEL (EL1,EL2,QOUT,IC,DT,JDAY)
-
+!!ENTRY OPEN_CHANNEL (EL1,EL2,QOUT,IC,DT,JDAY)
+!!
 ! Variable initializtion
-
-  B     = 0.0; Y     = 0.0; V = 0.0; VT = 0.0; YT = 0.0; RT = 0.0; DAA = 0.0; YPR = 0.0; VPR = 0.0; TOPW = 0.0; TOPWT = 0.0 
-  CAREA = 0.0; TAREA = 0.0
-  BELEV(1)  = UPIE
-  BELEV(NC) = DNIE
-  PHI       = ASIN((UPIE-DNIE)/CLEN)
-  DLTX      = CLEN/(REAL(NC-1)*0.5)
-  DO J=2,NC-1
-    DLTX2    =  DLTX*0.5
-    SLOPE    = (UPIE-DNIE)/CLEN
-    DIST     = (REAL(J-1)*DLTX2)
-    BELEV(J) =  UPIE-SLOPE*DIST
-  END DO
-  BEPR1 =  UPIE+SLOPE*DLTX2
-  BEPR2 =  DNIE-SLOPE*DLTX2
-  BC1   = (EL1-BEPR1)*COS(PHI)
-  IF (BC1 <= 0.0) BC1 = EL1-UPIE
-  BC2 = (EL2-BEPR2)*COS(PHI)
-  IF (BC2 <= 0.0) BC2 = EL2-DNIE
-  IF (.NOT. BEGIN(IC)) THEN
-    IF (WLFLAG(IC)) THEN
-      DO J=2,NC-1,2
-        WLSLOPE = ((BC1-BC2)/(CLEN+DLTX))*COS(PHI)
-        DIST    = (REAL(J-1)*0.5*DLTX)+DLTX2
-        Y(J)    =  BC1-WLSLOPE*DIST
-        YT(J)   =  Y(J)
-        DTP(IC) =  DT
-      END DO
-    ELSE
-      DO I=2,NC-1,2
-        Y(I)  = YS(I,IC)
-        YT(I) = YST(I,IC)
-      END DO
-    END IF
-  END IF
-  DO I=1,NC,2
-    V(I)  = VS(I,IC)
-    VT(I) = VST(I,IC)
-  END DO
-  IF (BEGIN(IC)) THEN
-    BEGIN(IC) = .FALSE.
-    DO J=2,NC-1,2
-      WLSLOPE = ((BC1-BC2)/(CLEN+DLTX))*COS(PHI)
-      DIST    = (REAL(J-1)*0.5*DLTX)+DLTX2
-      Y(J)    =  BC1-WLSLOPE*DIST
-      YT(J)   =  Y(J)
-      DTP(IC) =  DT
-    END DO
-    DO J=1,NC,2
-      V(J)  = 0.0
-      VT(J) = V(J)
-    END DO
-    OPENWRN = .TRUE.
-  END IF
-  SMOOTH_WATER_LEVELS = .FALSE.
-  DO N=1,NC,2
-    IF (N == NC) THEN
-      BAR1 = BAREA(BC2,DIA)
-      RAD1 = BAR1/WETPER(BC2,DIA)
-    ELSE
-      BAR1 = BAREA(Y(N+1),DIA)
-      RAD1 = BAR1/WETPER(Y(N+1),DIA)
-    END IF
-    IF (N == 1) THEN
-      BAR2 = BAREA(BC1,DIA)
-      RAD2 = BAR2/WETPER(BC1,DIA)
-    ELSE
-      BAR2 = BAREA(Y(N-1),DIA)
-      RAD2 = BAR2/WETPER(Y(N-1),DIA)
-    END IF
-    RT(N) = (RAD1+RAD2)*0.5
-  END DO
-  DO N=2,NC-1,2
-    TAREA(N) = BAREA(Y(N),DIA)
-    TOPWT(N) = TWIDTH(Y(N),DIA)
-    CAREA(N) = BAREA(Y(N),DIA)
-  END DO
-
+!!
+!!  B     = 0.0; Y     = 0.0; V = 0.0; VT = 0.0; YT = 0.0; RT = 0.0; DAA = 0.0; YPR = 0.0; VPR = 0.0; TOPW = 0.0; TOPWT = 0.0 
+!!  CAREA = 0.0; TAREA = 0.0
+!!  BELEV(1)  = UPIE
+!!  BELEV(NC) = DNIE
+!!  PHI       = ASIN((UPIE-DNIE)/CLEN)
+!!  DLTX      = CLEN/(REAL(NC-1)*0.5)
+!!  DO J=2,NC-1
+!!    DLTX2    =  DLTX*0.5
+!!    SLOPE    = (UPIE-DNIE)/CLEN
+!!    DIST     = (REAL(J-1)*DLTX2)
+!!    BELEV(J) =  UPIE-SLOPE*DIST
+!!  END DO
+!!  BEPR1 =  UPIE+SLOPE*DLTX2
+!!  BEPR2 =  DNIE-SLOPE*DLTX2
+!!  BC1   = (EL1-BEPR1)*COS(PHI)
+!!  IF (BC1 <= 0.0) BC1 = EL1-UPIE
+!!  BC2 = (EL2-BEPR2)*COS(PHI)
+!!  IF (BC2 <= 0.0) BC2 = EL2-DNIE
+!!  IF (.NOT. BEGIN(IC)) THEN
+!!    IF (WLFLAG(IC)) THEN
+!!      DO J=2,NC-1,2
+!!        WLSLOPE = ((BC1-BC2)/(CLEN+DLTX))*COS(PHI)
+!!        DIST    = (REAL(J-1)*0.5*DLTX)+DLTX2
+!!        Y(J)    =  BC1-WLSLOPE*DIST
+!!        YT(J)   =  Y(J)
+!!        DTP(IC) =  DT
+!!      END DO
+!!    ELSE
+!!      DO I=2,NC-1,2
+!!        Y(I)  = YS(I,IC)
+!!        YT(I) = YST(I,IC)
+!!      END DO
+!!    END IF
+!!  END IF
+!!  DO I=1,NC,2
+!!    V(I)  = VS(I,IC)
+!!    VT(I) = VST(I,IC)
+!!  END DO
+!!  IF (BEGIN(IC)) THEN
+!!    BEGIN(IC) = .FALSE.
+!!    DO J=2,NC-1,2
+!!      WLSLOPE = ((BC1-BC2)/(CLEN+DLTX))*COS(PHI)
+!!      DIST    = (REAL(J-1)*0.5*DLTX)+DLTX2
+!!      Y(J)    =  BC1-WLSLOPE*DIST
+!!      YT(J)   =  Y(J)
+!!      DTP(IC) =  DT
+!!    END DO
+!!    DO J=1,NC,2
+!!      V(J)  = 0.0
+!!      VT(J) = V(J)
+!!    END DO
+!!    OPENWRN = .TRUE.
+!!  END IF
+!!  SMOOTH_WATER_LEVELS = .FALSE.
+!!  DO N=1,NC,2
+!!    IF (N == NC) THEN
+!!      BAR1 = BAREA(BC2,DIA)
+!!      RAD1 = BAR1/WETPER(BC2,DIA)
+!!    ELSE
+!!      BAR1 = BAREA(Y(N+1),DIA)
+!!      RAD1 = BAR1/WETPER(Y(N+1),DIA)
+!!    END IF
+!!    IF (N == 1) THEN
+!!      BAR2 = BAREA(BC1,DIA)
+!!      RAD2 = BAR2/WETPER(BC1,DIA)
+!!    ELSE
+!!      BAR2 = BAREA(Y(N-1),DIA)
+!!      RAD2 = BAR2/WETPER(Y(N-1),DIA)
+!!    END IF
+!!    RT(N) = (RAD1+RAD2)*0.5
+!!  END DO
+!!  DO N=2,NC-1,2
+!!    TAREA(N) = BAREA(Y(N),DIA)
+!!    TOPWT(N) = TWIDTH(Y(N),DIA)
+!!    CAREA(N) = BAREA(Y(N),DIA)
+!!  END DO
+!!
 ! Projected water levels and velocities
-
-  DO J=1,NC,2
-    VPR(J) = V(J)+DT*(V(J)-VT(J))/DTP(IC)
-  END DO
-  DO J=2,NC-1,2
-    YPR(J) = Y(J)+DT*(Y(J)-YT(J))/DTP(IC)
-  END DO
+!!
+!!  DO J=1,NC,2
+!!    VPR(J) = V(J)+DT*(V(J)-VT(J))/DTP(IC)
+!!  END DO
+!!  DO J=2,NC-1,2
+!!    YPR(J) = Y(J)+DT*(Y(J)-YT(J))/DTP(IC)
+!!  END DO
 
 ! Matrix setup
-
-  VTOT = 0.0
-  DO J=1,NC,2
-    VTOT = VTOT+V(J)
-  END DO
-  VAVG = VTOT/(REAL(NC-1)*0.5)
-
+!!
+!!  VTOT = 0.0
+!!  DO J=1,NC,2
+!!    VTOT = VTOT+V(J)
+!!  END DO
+!!  VAVG = VTOT/(REAL(NC-1)*0.5)
+!!
 ! Continuity
-
-  DO N=2,NC-1,2
-    VPR(N) = (VPR(N-1)+VPR(N+1))*0.5
-    V(N)   = (V(N-1)+V(N+1))*0.5
-    IF (N /= 2) DAA(N,N-2) = -THETA*(DT/DLTX)*(VPR(N)*0.5)
-    DAA(N,N-1) = -THETA*(DT/DLTX)*(TAREA(N)/TOPWT(N))
-    DAA(N,N)   =  1.0
-    DAA(N,N+1) =  THETA*(DT/DLTX)*(TAREA(N)/TOPWT(N))
-    IF (N /= NC-1) DAA(N,N+2) = THETA*(DT/DLTX)*(VPR(N)*0.5)
-    IF (N == 2) THEN
-      B(N) = Y(N)-(1.0-THETA)*(DT/DLTX)*(TAREA(N)/TOPWT(N))*(V(N+1)-V(N-1))-(1.0-THETA)*(DT/DLTX)*(V(N)*0.5)*(Y(N+2)-BC1)          &
-             +THETA*(DT/DLTX)*(VPR(N)*0.5)*BC1
-    ELSE IF (N == NC-1) THEN
-      B(N) = Y(N)-(1.0-THETA)*(DT/DLTX)*(TAREA(N)/TOPWT(N))*(V(N+1)-V(N-1))-(1.0-THETA)*(DT/DLTX)*(V(N)*0.5)*(BC2-Y(N-2))          &
-             -THETA*(DT/DLTX)*(VPR(N)*0.5)*BC2
-    ELSE
-      B(N) = Y(N)-(1.0-THETA)*(DT/DLTX)*(TAREA(N)/TOPWT(N))*(V(N+1)-V(N-1))-(1.0-THETA)*(DT/DLTX)*(V(N)*0.5)*(Y(N+2)-Y(N-2))
-    END IF
-  END DO
-  IF (VAVG > 0.0 .OR. (VAVG == 0.0 .AND. EL1 > EL2)) THEN
-
+!!
+!!  DO N=2,NC-1,2
+!!    VPR(N) = (VPR(N-1)+VPR(N+1))*0.5
+!!    V(N)   = (V(N-1)+V(N+1))*0.5
+!!    IF (N /= 2) DAA(N,N-2) = -THETA*(DT/DLTX)*(VPR(N)*0.5)
+!!    DAA(N,N-1) = -THETA*(DT/DLTX)*(TAREA(N)/TOPWT(N))
+!!    DAA(N,N)   =  1.0
+!!    DAA(N,N+1) =  THETA*(DT/DLTX)*(TAREA(N)/TOPWT(N))
+!!    IF (N /= NC-1) DAA(N,N+2) = THETA*(DT/DLTX)*(VPR(N)*0.5)
+!!    IF (N == 2) THEN
+!!      B(N) = Y(N)-(1.0-THETA)*(DT/DLTX)*(TAREA(N)/TOPWT(N))*(V(N+1)-V(N-1))-(1.0-THETA)*(DT/DLTX)*(V(N)*0.5)*(Y(N+2)-BC1)          &
+!!             +THETA*(DT/DLTX)*(VPR(N)*0.5)*BC1
+!!    ELSE IF (N == NC-1) THEN
+!!      B(N) = Y(N)-(1.0-THETA)*(DT/DLTX)*(TAREA(N)/TOPWT(N))*(V(N+1)-V(N-1))-(1.0-THETA)*(DT/DLTX)*(V(N)*0.5)*(BC2-Y(N-2))          &
+!!             -THETA*(DT/DLTX)*(VPR(N)*0.5)*BC2
+!!    ELSE
+!!      B(N) = Y(N)-(1.0-THETA)*(DT/DLTX)*(TAREA(N)/TOPWT(N))*(V(N+1)-V(N-1))-(1.0-THETA)*(DT/DLTX)*(V(N)*0.5)*(Y(N+2)-Y(N-2))
+!!    END IF
+!!  END DO
+!!  IF (VAVG > 0.0 .OR. (VAVG == 0.0 .AND. EL1 > EL2)) THEN
+!!
 !** Momentum 
-
-    DO N=1,NC,2
-      IF (N /= 1) THEN
-        DAA(N,N-2) = -THETA*(DT/DLTX)*VPR(N)
-        DAA(N,N-1) = -THETA*(DT/DLTX)*G*COS(PHI)
-      END IF
-      DAA(N,N) = 1.0+THETA*DT*G*(FMAN**2)*ABS(VPR(N))/(RT(N)**(4.0/3.0))+THETA*(DT/DLTX)*VPR(N)+THETA*(CLOSS*0.5)*(DT/CLEN)        &
-                 *ABS(VPR(N))
-      IF (N /= NC) DAA(N,N+1) = THETA*(DT/DLTX)*G*COS(PHI)
-      IF (N == 1) THEN
-        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(Y(N+1)-BC1)*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*V(N)-(1.0-THETA)*DT*G*(FMAN**2)       &
-               /(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))+THETA*(DT/DLTX)   &
-               *G*COS(PHI)*BC1
-      ELSE IF (N == NC) THEN
-        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(BC2-Y(N-1))*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*(V(N)-V(N-2))-(1.0-THETA)             &
-               *DT*G*(FMAN**2)/(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))    &
-               -THETA*(DT/DLTX)*G*COS(PHI)*BC2
-      ELSE
-        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(Y(N+1)-Y(N-1))*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*(V(N)-V(N-2))-(1.0-THETA)          &
-               *DT*G*(FMAN**2)/(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))
-      END IF
-    END DO
-  ELSE
-    DO N=1,NC,2
-      IF (N /= NC) THEN
-        DAA(N,N+2) = THETA*(DT/DLTX)*VPR(N)
-        DAA(N,N+1) = THETA*(DT/DLTX)*G*COS(PHI)
-      END IF
-      DAA(N,N) = 1.0+THETA*DT*G*(FMAN**2)*ABS(VPR(N))/(RT(N)**(4.0/3.0))-THETA*(DT/DLTX)*VPR(N)+THETA*(CLOSS*0.5)*(DT/CLEN)        &
-                 *ABS(VPR(N))
-      IF (N /= 1) DAA(N,N-1) = -THETA*(DT/DLTX)*G*COS(PHI)
-      IF (N == NC) THEN
-        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(BC2-Y(N-1))*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*(-V(N))-(1.0-THETA)*DT*G*(FMAN**2)    &
-               /(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))-THETA*(DT/DLTX)   &
-               *G*COS(PHI)*BC2
-      ELSE IF (N == 1) THEN
-        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(Y(N+1)-BC1)*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*(V(N+2)-V(N))-(1.0-THETA)             &
-               *DT*G*(FMAN**2)/(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))    &
-               +THETA*(DT/DLTX)*G*COS(PHI)*BC1
-      ELSE
-        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(Y(N+1)-Y(N-1))*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*(V(N+2)-V(N))-(1.0-THETA)          &
-               *DT*G*(FMAN**2)/(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))
-      END IF
-    END DO
-  END IF
-  NP = NN
-  CALL LUDCMP (DAA,NC,NP,INDX,D)
-  CALL LUBKSB (DAA,NC,NP,INDX,B)
-  DO I=2,NC-1,2
-    YOLD(I)   = Y(I)
-    YST(I,IC) = Y(I)
-  END DO
-  DO I=2,NC-1,2
-    Y(I) = B(I)
-  END DO
-
+!!
+!!    DO N=1,NC,2
+!!      IF (N /= 1) THEN
+!!        DAA(N,N-2) = -THETA*(DT/DLTX)*VPR(N)
+!!        DAA(N,N-1) = -THETA*(DT/DLTX)*G*COS(PHI)
+!!      END IF
+!!      DAA(N,N) = 1.0+THETA*DT*G*(FMAN**2)*ABS(VPR(N))/(RT(N)**(4.0/3.0))+THETA*(DT/DLTX)*VPR(N)+THETA*(CLOSS*0.5)*(DT/CLEN)        &
+!!                 *ABS(VPR(N))
+!!      IF (N /= NC) DAA(N,N+1) = THETA*(DT/DLTX)*G*COS(PHI)
+!!      IF (N == 1) THEN
+!!        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(Y(N+1)-BC1)*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*V(N)-(1.0-THETA)*DT*G*(FMAN**2)       &
+!!               /(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))+THETA*(DT/DLTX)   &
+!!               *G*COS(PHI)*BC1
+!!      ELSE IF (N == NC) THEN
+!!        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(BC2-Y(N-1))*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*(V(N)-V(N-2))-(1.0-THETA)             &
+!!               *DT*G*(FMAN**2)/(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))    &
+!!               -THETA*(DT/DLTX)*G*COS(PHI)*BC2
+!!      ELSE
+!!        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(Y(N+1)-Y(N-1))*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*(V(N)-V(N-2))-(1.0-THETA)          &
+!!               *DT*G*(FMAN**2)/(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))
+!!      END IF
+!!    END DO
+!!  ELSE
+!!    DO N=1,NC,2
+!!      IF (N /= NC) THEN
+!!        DAA(N,N+2) = THETA*(DT/DLTX)*VPR(N)
+!!        DAA(N,N+1) = THETA*(DT/DLTX)*G*COS(PHI)
+!!      END IF
+!!      DAA(N,N) = 1.0+THETA*DT*G*(FMAN**2)*ABS(VPR(N))/(RT(N)**(4.0/3.0))-THETA*(DT/DLTX)*VPR(N)+THETA*(CLOSS*0.5)*(DT/CLEN)        &
+!!                 *ABS(VPR(N))
+!!      IF (N /= 1) DAA(N,N-1) = -THETA*(DT/DLTX)*G*COS(PHI)
+!!      IF (N == NC) THEN
+!!        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(BC2-Y(N-1))*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*(-V(N))-(1.0-THETA)*DT*G*(FMAN**2)    &
+!!               /(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))-THETA*(DT/DLTX)   &
+!!               *G*COS(PHI)*BC2
+!!      ELSE IF (N == 1) THEN
+!!        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(Y(N+1)-BC1)*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*(V(N+2)-V(N))-(1.0-THETA)             &
+!!               *DT*G*(FMAN**2)/(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))    &
+!!               +THETA*(DT/DLTX)*G*COS(PHI)*BC1
+!!      ELSE
+!!        B(N) = V(N)-(1.0-THETA)*(DT/DLTX)*G*(Y(N+1)-Y(N-1))*COS(PHI)-(1.0-THETA)*V(N)*(DT/DLTX)*(V(N+2)-V(N))-(1.0-THETA)          &
+!!               *DT*G*(FMAN**2)/(RT(N)**(4.0/3.0))*V(N)*ABS(V(N))+DT*G*SIN(PHI)-(1.0-THETA)*(DT/CLEN)*(CLOSS*0.5)*V(N)*ABS(V(N))
+!!      END IF
+!!    END DO
+!!  END IF
+!!  NP = NN
+!!  CALL LUDCMP (DAA,NC,NP,INDX,D)
+!!  CALL LUBKSB (DAA,NC,NP,INDX,B)
+!!  DO I=2,NC-1,2
+!!    YOLD(I)   = Y(I)
+!!    YST(I,IC) = Y(I)
+!!  END DO
+!!  DO I=2,NC-1,2
+!!    Y(I) = B(I)
+!!  END DO
+!!
 ! Smooth water levels
 
-  DO I=2,NC-1,2
-    IF (Y(I) <= 0.0) THEN
-      IF (OPENWRN) THEN
-        OPEN (391,FILE='culvert.wrn',STATUS='unknown')
-        OPENWRN = .FALSE.
-      END IF
-      SMOOTH_WATER_LEVELS = .TRUE.
-    END IF
-  END DO
-  IF (SMOOTH_WATER_LEVELS) THEN
-    DO J=2,NC-1,2
-      WLSLOPE = ((BC1-BC2)/(CLEN+DLTX))*COS(PHI)
-      DIST    = (REAL(J-1)*0.5*DLTX)+DLTX2
-      Y(J)    =  BC1-WLSLOPE*DIST
-    END DO
-    WRITE (391,10010) IC, JDAY
-    SMOOTH_WATER_LEVELS = .FALSE.
-  END IF
-
+!!  DO I=2,NC-1,2
+!!    IF (Y(I) <= 0.0) THEN
+!!      IF (OPENWRN) THEN
+!!        OPEN (391,FILE='culvert.wrn',STATUS='unknown')
+!!        OPENWRN = .FALSE.
+!!      END IF
+!!      SMOOTH_WATER_LEVELS = .TRUE.
+!!    END IF
+!!  END DO
+!!  IF (SMOOTH_WATER_LEVELS) THEN
+!!    DO J=2,NC-1,2
+!!      WLSLOPE = ((BC1-BC2)/(CLEN+DLTX))*COS(PHI)
+!!      DIST    = (REAL(J-1)*0.5*DLTX)+DLTX2
+!!      Y(J)    =  BC1-WLSLOPE*DIST
+!!    END DO
+!!    WRITE (391,10010) IC, JDAY
+!!    SMOOTH_WATER_LEVELS = .FALSE.
+!!  END IF
+!!
 ! Flows
-
-  NQCNT = 0
-  QSUM  = 0.0
-  DO I=1,NC,2
-    VOLD(I)   = V(I)
-    VST(I,IC) = V(I)
-    V(I)      = B(I)
-    IF (I == NC) THEN
-      BAR1 = BAREA(BC2,DIA)
-    ELSE
-      BAR1 = BAREA(Y(I+1),DIA)
-    END IF
-    IF (I == 1) THEN
-      BAR2 = BAREA(BC1,DIA)
-    ELSE
-      BAR2 = BAREA(Y(I-1),DIA)
-    END IF
-    CAREA(I) = (BAR1+BAR2)*0.5
-    Q(I)     =  V(I)*CAREA(I)
-    NQCNT    =  NQCNT+1
-    QSUM     =  QSUM+Q(I)
-  END DO
-  QAVG = QSUM/REAL(NQCNT)
-  DO I=2,NC-1,2
-    YS(I,IC) = Y(I)
-  END DO
-  VMAX(IC) = 0.0
-  DO I=1,NC,2
-    VS(I,IC) = V(I)
-    VMAX(IC) = MAX(ABS(V(I)),VMAX(IC))
-  END DO
-  DTP(IC)    =  DT
-  QOUT       =  QAVG
-  QOLD(IC)   =  QOUT
-  WLFLAG(IC) = .FALSE.
-10010 FORMAT ('water levels for culvert ',I3,' on Julian Day ',F10.3,' are <= 0 - predictions have been smoothed')
-RETURN
-ENTRY DEALLOCATE_OPEN_CHANNEL
-  DEALLOCATE (Y, V, CAREA, TOPW, BELEV, Q, VOLD, YOLD, D, B, YT, VT, VPR, YPR, TAREA, TOPWT, RT, INDX, AL, DAA)
-RETURN
-END SUBROUTINE OPEN_CHANNEL_INITIALIZE
+!!
+!!  NQCNT = 0
+!!  QSUM  = 0.0
+!!  DO I=1,NC,2
+!!    VOLD(I)   = V(I)
+!!    VST(I,IC) = V(I)
+!!    V(I)      = B(I)
+!!    IF (I == NC) THEN
+!!      BAR1 = BAREA(BC2,DIA)
+!!    ELSE
+!!      BAR1 = BAREA(Y(I+1),DIA)
+!!    END IF
+!!    IF (I == 1) THEN
+!!      BAR2 = BAREA(BC1,DIA)
+!!    ELSE
+!!      BAR2 = BAREA(Y(I-1),DIA)
+!!    END IF
+!!    CAREA(I) = (BAR1+BAR2)*0.5
+!!    Q(I)     =  V(I)*CAREA(I)
+!!    NQCNT    =  NQCNT+1
+!!    QSUM     =  QSUM+Q(I)
+!!  END DO
+!!  QAVG = QSUM/REAL(NQCNT)
+!!  DO I=2,NC-1,2
+!!    YS(I,IC) = Y(I)
+!!  END DO
+!!  VMAX(IC) = 0.0
+!!  DO I=1,NC,2
+!!    VS(I,IC) = V(I)
+!!    VMAX(IC) = MAX(ABS(V(I)),VMAX(IC))
+!!  END DO
+!!  DTP(IC)    =  DT
+!!  QOUT       =  QAVG
+!!  QOLD(IC)   =  QOUT
+!!  WLFLAG(IC) = .FALSE.
+!!10010 FORMAT ('water levels for culvert ',I3,' on Julian Day ',F10.3,' are <= 0 - predictions have been smoothed')
+!!RETURN
+!!ENTRY DEALLOCATE_OPEN_CHANNEL
+!!  DEALLOCATE (Y, V, CAREA, TOPW, BELEV, Q, VOLD, YOLD, D, B, YT, VT, VPR, YPR, TAREA, TOPWT, RT, INDX, AL, DAA)
+!!RETURN
+!!END SUBROUTINE OPEN_CHANNEL_INITIALIZE
 
 !***********************************************************************************************************************************
 !**                                             S U B R O U T I N E   G R I D  A R E A 1                                          **
@@ -13359,92 +13407,92 @@ END SUBROUTINE
 !**                                              S U B R O U T I N E   L U D C M P                                                **
 !***********************************************************************************************************************************
 
-SUBROUTINE LUDCMP (A,N,NP,INDX,D)
-  REAL            :: A(NP,NP)
-  REAL            :: VV(500)
-  REAL, PARAMETER :: TINY=1.0E-20
-  INTEGER         :: INDX(NP)
-
-  D = 1.0
-  DO I=1,N
-    AAMAX = 0.0
-    DO J=1,N
-      IF (ABS(A(I,J)) > AAMAX) AAMAX = ABS(A(I,J))
-    END DO
-    VV(I) = 1.0/AAMAX
-  END DO
-  DO J=1,N
-    DO I=1,J-1
-      SUM = A(I,J)
-      DO K=1,I-1
-        SUM = SUM-A(I,K)*A(K,J)
-      END DO
-      A(I,J) = SUM
-    END DO
-    AAMAX = 0.0
-    DO I=J,N
-      SUM = A(I,J)
-      DO K=1,J-1
-        SUM = SUM-A(I,K)*A(K,J)
-      END DO
-      A(I,J) = SUM
-      DUM = VV(I)*ABS(SUM)
-      IF (DUM >= AAMAX) THEN
-        IMAX  = I
-        AAMAX = DUM
-      END IF
-    END DO
-    IF (J /= IMAX) THEN
-      DO K=1,N
-        DUM       = A(IMAX,K)
-        A(IMAX,K) = A(J,K)
-        A(J,K)    = DUM
-      END DO
-      D        = -D
-      VV(IMAX) =  VV(J)
-    END IF
-    INDX(J) = IMAX
-    IF (A(J,J) == 0.0) A(J,J) = TINY
-    IF (J /= N) THEN
-      DUM = 1.0/A(J,J)
-      DO I=J+1,N
-        A(I,J) = A(I,J)*DUM
-      END DO
-    END IF
-  END DO
-END SUBROUTINE LUDCMP
+!!SUBROUTINE LUDCMP (A,N,NP,INDX,D)
+!!  REAL            :: A(NP,NP)
+!!  REAL            :: VV(500)
+!!  REAL, PARAMETER :: TINY=1.0E-20
+!!  INTEGER         :: INDX(NP)
+!!
+!!  D = 1.0
+!!  DO I=1,N
+!!    AAMAX = 0.0
+!!    DO J=1,N
+!!      IF (ABS(A(I,J)) > AAMAX) AAMAX = ABS(A(I,J))
+!!    END DO
+!!    VV(I) = 1.0/AAMAX
+!!  END DO
+!!  DO J=1,N
+!!    DO I=1,J-1
+!!      SUM = A(I,J)
+!!      DO K=1,I-1
+!!        SUM = SUM-A(I,K)*A(K,J)
+!!      END DO
+!!      A(I,J) = SUM
+!!    END DO
+!!    AAMAX = 0.0
+!!    DO I=J,N
+!!      SUM = A(I,J)
+!!      DO K=1,J-1
+!!        SUM = SUM-A(I,K)*A(K,J)
+!!      END DO
+!!      A(I,J) = SUM
+!!      DUM = VV(I)*ABS(SUM)
+!!      IF (DUM >= AAMAX) THEN
+!!        IMAX  = I
+!!        AAMAX = DUM
+!!      END IF
+!!    END DO
+!!    IF (J /= IMAX) THEN
+!!      DO K=1,N
+!!        DUM       = A(IMAX,K)
+!!        A(IMAX,K) = A(J,K)
+!!        A(J,K)    = DUM
+!!      END DO
+!!      D        = -D
+!!      VV(IMAX) =  VV(J)
+!!    END IF
+!!    INDX(J) = IMAX
+!!    IF (A(J,J) == 0.0) A(J,J) = TINY
+!!    IF (J /= N) THEN
+!!      DUM = 1.0/A(J,J)
+!!      DO I=J+1,N
+!!        A(I,J) = A(I,J)*DUM
+!!      END DO
+!!    END IF
+!!  END DO
+!!END SUBROUTINE LUDCMP
 
 !***********************************************************************************************************************************
 !**                                              S U B R O U T I N E   L U B K S B                                                **
 !***********************************************************************************************************************************
 
-SUBROUTINE LUBKSB (A,N,NP,INDX,B)
-  REAL    :: A(NP,NP), B(N)
-  INTEGER :: N, NP, INDX(NP)
-  INTEGER :: I, II, J, LL
-
-  II = 0
-  DO I=1,N
-    LL    = INDX(I)
-    SUM   = B(LL)
-    B(LL) = B(I)
-    IF (II /= 0) THEN
-      DO J=II,I-1
-        SUM = SUM-A(I,J)*B(J)
-      END DO
-    ELSE IF (SUM /= 0.0) THEN
-      II = I
-    END IF
-    B(I) = SUM
-  END DO
-  DO I=N,1,-1
-    SUM = B(I)
-    DO J=I+1,N
-      SUM = SUM-A(I,J)*B(J)
-    END DO
-    B(I) = SUM/A(I,I)
-  END DO
-END SUBROUTINE LUBKSB
+!!SUBROUTINE LUBKSB (A,N,NP,INDX,B)
+!!  REAL    :: A(NP,NP), B(N)
+!!  INTEGER :: N, NP, INDX(NP)
+!!  INTEGER :: I, II, J, LL
+!!
+!!  II = 0
+!!  DO I=1,N
+!!    LL    = INDX(I)
+!!    SUM   = B(LL)
+!!    B(LL) = B(I)
+!!    IF (II /= 0) THEN
+!!      DO J=II,I-1
+!!        SUM = SUM-A(I,J)*B(J)
+!!      END DO
+!!    ELSE IF (SUM /= 0.0) THEN
+!!      II = I
+!!    END IF
+!!    B(I) = SUM
+!!  END DO
+!!  DO I=N,1,-1
+!!    SUM = B(I)
+!!    DO J=I+1,N
+!!      SUM = SUM-A(I,J)*B(J)
+!!    END DO
+!!    B(I) = SUM/A(I,I)
+!!  END DO
+!!END SUBROUTINE LUBKSB
 
 !***********************************************************************************************************************************
 !**                                                  F U N C T I O N   B A R E A                                                  **
