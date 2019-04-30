@@ -22,6 +22,7 @@
 !**                                                  Portland State University                                                    **
 !**                                                         PO Box 751                                                            **
 !**                                                 Portland, Oregon  97207-0751                                                  **
+!**                                                 phone number: (503) 725-4276                                                  **
 !**                                                 fax   number: (503) 725-5950                                                  **
 !**                                                   e-mail: scott@cecs.pdx.edu                                                  **
 !**                                                                                                                               **
@@ -150,7 +151,7 @@ END MODULE SURFHE
 MODULE TVDC
   REAL,              ALLOCATABLE, DIMENSION(:)       :: QIN,    QTR,    QDTR,   PR,     ELUH,   ELDH,   QWD,    QSUM
   REAL,              ALLOCATABLE, DIMENSION(:)       :: TIN,    TTR,    TDTR,   TPR,    TOUT,   TWDO,   TIND,   QIND   
-  REAL,              ALLOCATABLE, DIMENSION(:)       :: TAIR,   TDEW,   CLOUD,  PHI,    SRON,   RATM  
+  REAL,              ALLOCATABLE, DIMENSION(:)       :: TAIR,   TDEW,   CLOUD,  PHI,    SRON   
   REAL,              ALLOCATABLE, DIMENSION(:,:)     :: CIN,    CTR,    CDTR,   CPR,    CIND,   TUH,    TDH,    QOUT
   REAL,              ALLOCATABLE, DIMENSION(:,:,:)   :: CUH,    CDH
   INTEGER                                            :: NAC,    NOPEN
@@ -631,7 +632,7 @@ write(*,'(//8X,8I8)')     NTR, NST, NIW, NWD, NGT, NSP, NPI, NPU
   ALLOCATE (ICEC(NWB),   SLICEC(NWB), ICETHI(NWB), ALBEDO(NWB), HWI(NWB),    BETAI(NWB),  GAMMAI(NWB), ICEMIN(NWB), ICET2(NWB))
   ALLOCATE (EXH2O(NWB),  BETA(NWB),   EXOM(NWB),   EXSS(NWB),   DXI(NWB),    CBHE(NWB),   TSED(NWB),   TSEDF(NWB),  FI(NWB))
   ALLOCATE (AX(NWB),     WTYPEC(NWB), JBDN(NWB),   AZC(NWB),    AZMAX(NWB),  QINT(NWB),   QOUTT(NWB),  GRIDC(NWB))     !SW 07/14/04
-  ALLOCATE (TAIR(NWB),   TDEW(NWB),   WIND(NWB),   PHI(NWB),    CLOUD(NWB),  CSHE(IMX),   SRON(NWB),   RATM(NWB))
+  ALLOCATE (TAIR(NWB),   TDEW(NWB),   WIND(NWB),   PHI(NWB),    CLOUD(NWB),  CSHE(IMX),   SRON(NWB),   RAN(NWB))
   ALLOCATE (SNPC(NWB),   SCRC(NWB),   PRFC(NWB),   SPRC(NWB),   CPLC(NWB),   VPLC(NWB),   FLXC(NWB))
   ALLOCATE (NXTMSN(NWB), NXTMSC(NWB), NXTMPR(NWB), NXTMSP(NWB), NXTMCP(NWB), NXTMVP(NWB), NXTMFL(NWB))
   ALLOCATE (SNPDP(NWB),  SCRDP(NWB),  PRFDP(NWB),  SPRDP(NWB),  CPLDP(NWB),  VPLDP(NWB),  FLXDP(NWB))
@@ -1487,8 +1488,7 @@ write(*,*) 'SNPF'
   ELTMS  = 0.0; TDTR   = 0.0; DM     = 0.0; QIN    = 0.0; REAER  = 0.0; ST     = 0.0; SB     = 0.0; ADMX   = 0.0; QWD    = 0.0
   ADMZ   = 0.0; HPG    = 0.0; HDG    = 0.0; RHO    = 0.0; JDAYTS = 0.0; JDAY1  = 0.0; DEPTHB = 0.0; DEPTHM = 0.0; UXBR   = 0.0
   BHRHO  = 0.0; DLMR   = 0.0; SRON   = 0.0; CSSB   = 0.0; Q      = 0.0; BH1    = 0.0; BH2    = 0.0; BHR1   = 0.0; BHR2   = 0.0
-  AVHR   = 0.0; GRAV   = 0.0; kbp    = 0; DZT=0.0; AZT=0.0   ! SW 1/23/06 10/20/07
-  RATM   = 0.0                                               ! JRY 04/24/2019
+  AVHR   = 0.0; GRAV   = 0.0; kbp = 0; DZT=0.0; AZT=0.0   ! SW 1/23/06 10/20/07
   IF (.NOT. RESTART_IN) THEN
     NSPRF  = 0;   IZMIN  = 0;   KTWB   = 2;   KMIN   = 1;   IMIN   = 1
     T1     = 0.0; T2     = 0.0; C1     = 0.0; C2     = 0.0; CD     = 0.0; CIN    = 0.0; C1S    = 0.0; KF     = 0.0; CMBRT  = 0.0
@@ -5146,16 +5146,16 @@ write(*,*) 'SNPF'
 
     DO JW=1,NWB
       KT = KTWB(JW)
-!!      IF (.NOT. NO_HEAT(JW)) THEN
-!!        IF (.NOT. READ_RADIATION(JW)) CALL SHORT_WAVE_RADIATION (JDAY)
-!!        IF (TERM_BY_TERM(JW))then                                      ! SW 1/25/05
-!!           if(tair(jw).ge.5.0)then
-!!           RAN(JW) = 5.31E-13*(273.15+TAIR(JW))**6*(1.0+0.0017*CLOUD(JW)**2)*0.97
-!!           else
-!!           RAN(JW) = 5.62E-8*(273.15+TAIR(JW))**4*(1.-0.261*exp(-7.77E-4*TAIR(JW)**2))*(1.0+0.0017*CLOUD(JW)**2)*0.97
-!!           endif
-!!        ENDIF
-!!      END IF
+      IF (.NOT. NO_HEAT(JW)) THEN
+        IF (.NOT. READ_RADIATION(JW)) CALL SHORT_WAVE_RADIATION (JDAY)
+        IF (TERM_BY_TERM(JW))then                                      ! SW 1/25/05
+           if(tair(jw).ge.5.0)then
+           RAN(JW) = 5.31E-13*(273.15+TAIR(JW))**6*(1.0+0.0017*CLOUD(JW)**2)*0.97
+           else
+           RAN(JW) = 5.62E-8*(273.15+TAIR(JW))**4*(1.-0.261*exp(-7.77E-4*TAIR(JW)**2))*(1.0+0.0017*CLOUD(JW)**2)*0.97
+           endif
+        ENDIF
+      END IF
       DO JB=BS(JW),BE(JW)
         IU = CUS(JB)
         ID = DS(JB)
@@ -5172,7 +5172,7 @@ write(*,*) 'SNPF'
               IF (TERM_BY_TERM(JW)) THEN
                 CALL SURFACE_TERMS (T2(KT,I))
                 RS(I)     = SRON(JW)*SHADE(I)
-                RN(I)     = RS(I)+RATM(JW)-RB(I)-RE(I)-RC(I)
+                RN(I)     = RS(I)+RAN(JW)-RB(I)-RE(I)-RC(I)
                 HEATEX    = RN(I)/RHOWCP*BI(KT,I)*DLX(I)
               ELSE
                 CALL EQUILIBRIUM_TEMPERATURE
@@ -5251,7 +5251,7 @@ write(*,*) 'SNPF'
                   J    = 1
                   DO WHILE (DEL > 1.0 .AND. J < 500)
                     CALL SURFACE_TERMS (TICE)
-                    RN(I) = SRON(JW)/(REFL*RHOWCP)*SHADE(I)*(1.0-ALBEDO(JW))*BETAI(JW)+RATM(JW)-RB(I)-RE(JW)-RC(I)
+                    RN(I) = SRON(JW)/(REFL*RHOWCP)*SHADE(I)*(1.0-ALBEDO(JW))*BETAI(JW)+RAN(JW)-RB(I)-RE(JW)-RC(I)
                     DEL   = RN(I)+RK1*(RIMT-TICE)/ICETH(I)
                     IF (ABS(DEL) > 1.0) TICE = TICE+DEL/500.0
                     J = J+1
@@ -7473,7 +7473,7 @@ write(*,*) 'SNPF'
   DEALLOCATE (seds,   sedb)    !cb 11/28/06
 ! v3.5 end
   DEALLOCATE (EXH2O,  BETA,   EXOM,   EXSS,   DXI,    CBHE,   TSED,   TSEDF,  FI,     ICET2,  AZC,    AZMAX,  QINT,   QOUTT)
-  DEALLOCATE (AX,     WTYPEC, TAIR,   TDEW,   WIND,   PHI,    CLOUD,  CSHE,   SRON,   RATM,    RB,     RC,     RE,     SHADE)
+  DEALLOCATE (AX,     WTYPEC, TAIR,   TDEW,   WIND,   PHI,    CLOUD,  CSHE,   SRON,   RAN,    RB,     RC,     RE,     SHADE)
   DEALLOCATE (ET,     RS,     RN,     SNPC,   SCRC,   PRFC,   SPRC,   CPLC,   VPLC,   FLXC,   NXTMCP, NXTMVP, NXTMFL, GAMMA)
   DEALLOCATE (NXTMSN, NXTMSC, NXTMPR, NXTMSP, SNPDP,  SCRDP,  PRFDP,  SPRDP,  CPLDP,  VPLDP,  FLXDP,  NCPL,   NVPL,   NFLX)
   DEALLOCATE (NSNP,   NSCR,   NPRF,   NSPR,   NEQN,   PO4R,   PARTP,  NH4DK,  NH4R,   NO3DK,  NO3S,   FER,    FES,    CDSUM)
@@ -7733,9 +7733,9 @@ SUBROUTINE TIME_VARYING_DATA
   REAL                                   :: NXQWD1, NXQWD2, NXQGT,  NXTVD
   REAL                                   :: NXWSC
   REAL,    ALLOCATABLE, DIMENSION(:)     :: QDTRO,  TDTRO,  ELUHO,  ELDHO,  QWDO,   QTRO,   TTRO,   QINO,   TINO
-  REAL,    ALLOCATABLE, DIMENSION(:)     :: TAIRNX, TDEWNX, PHINX,  WINDNX, SRONX,  RATMX,   CLOUDNX,BGTNX
+  REAL,    ALLOCATABLE, DIMENSION(:)     :: TAIRNX, TDEWNX, PHINX,  WINDNX, SRONX,  CLOUDNX,BGTNX
   REAL,    ALLOCATABLE, DIMENSION(:)     :: NXEXT1, NXEXT2, EXTNX,  EXTO   
-  REAL,    ALLOCATABLE, DIMENSION(:)     :: TAIRO,  TDEWO,  PHIO,   WINDO,  SROO,   RATMO,   CLOUDO
+  REAL,    ALLOCATABLE, DIMENSION(:)     :: TAIRO,  TDEWO,  PHIO,   WINDO,  SROO,   CLOUDO
   REAL,    ALLOCATABLE, DIMENSION(:)     :: QDTRNX, TDTRNX, PRNX,   TPRNX,  ELUHNX, ELDHNX, QWDNX,  QTRNX,  TTRNX,  QINNX,  TINNX
   REAL,    ALLOCATABLE, DIMENSION(:)     :: NXQTR1, NXTTR1, NXCTR1, NXQIN1, NXTIN1, NXCIN1, NXQDT1, NXTDT1, NXCDT1
   REAL,    ALLOCATABLE, DIMENSION(:)     :: NXPR1,  NXTPR1, NXCPR1, NXEUH1, NXTUH1, NXCUH1, NXEDH1, NXTDH1, NXCDH1, NXQOT1, NXMET1
@@ -7762,7 +7762,7 @@ SUBROUTINE TIME_VARYING_DATA
   ALLOCATE (QDTRO(NBR),  TDTRO(NBR),  ELUHO(NBR),  ELDHO(NBR),  QWDO(NWD),   QTRO(NTR),   TTRO(NTR),   QINO(NBR),   TINO(NBR))
   ALLOCATE (QDTRNX(NBR), TDTRNX(NBR), PRNX(NBR),   TPRNX(NBR),  ELUHNX(NBR), ELDHNX(NBR), QWDNX(NWD),  QTRNX(NTR),  TTRNX(NTR))
   ALLOCATE (QINNX(NBR),  TINNX(NBR),  SROO(NWB),   TAIRO(NWB),  TDEWO(NWB),  CLOUDO(NWB), PHIO(NWB),   WINDO(NWB),  TAIRNX(NWB))
-  ALLOCATE (TDEWNX(NWB), CLOUDNX(NWB),PHINX(NWB),  WINDNX(NWB), SRONX(NWB),  RATMX(NWB),   BGTNX(NGT))
+  ALLOCATE (TDEWNX(NWB), CLOUDNX(NWB),PHINX(NWB),  WINDNX(NWB), SRONX(NWB),  BGTNX(NGT))
   ALLOCATE (TRQ(NTR),    TRT(NTR),    TRC(NTR),    INQ(NBR),    DTQ(NBR),    PRE(NBR),    UHE(NBR),    DHE(NBR),    INFT(NBR))
   ALLOCATE (DTT(NBR),    PRT(NBR),    UHT(NBR),    DHT(NBR),    INC(NBR),    DTC(NBR),    PRC(NBR),    UHC(NBR),    DHC(NBR))
   ALLOCATE (OTQ(NBR),    MET(NWB),    EXT(NWB))
@@ -7772,8 +7772,6 @@ SUBROUTINE TIME_VARYING_DATA
   ALLOCATE (QSTRNX(NST,NBR))
   ALLOCATE (CUHO(KMX,NCT,NBR), CDHO(KMX,NCT,NBR), CUHNX(KMX,NCT,NBR), CDHNX(KMX,NCT,NBR))
   ALLOCATE (INFLOW_CONST(NBR), TRIB_CONST(NTR),   DTRIB_CONST(NBR),   PRECIP_CONST(NBR))
-!!
-  ALLOCATE (RATMO(NWB))
 
   NXPR1  = 0.0; NXQTR1 = 0.0; NXTTR1 = 0.0; NXCTR1 = 0.0; NXQIN1 = 0.0; NXTIN1 = 0.0; NXCIN1 = 0.0; NXQDT1 = 0.0; NXTDT1 = 0.0
   NXCDT1 = 0.0; NXTPR1 = 0.0; NXCPR1 = 0.0; NXEUH1 = 0.0; NXTUH1 = 0.0; NXCUH1 = 0.0; NXEDH1 = 0.0; NXTDH1 = 0.0; NXCDH1 = 0.0
@@ -7801,18 +7799,14 @@ SUBROUTINE TIME_VARYING_DATA
   DO JW=1,NWB
     MET(JW) = NPT; NPT = NPT+1
     OPEN (MET(JW),FILE=METFN(JW),STATUS='OLD')
-!!    IF (READ_RADIATION(JW)) THEN
-      READ (MET(JW),'(///10F8.0)') NXMET2(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW),SRONX(JW),RATMX(JW)
-!!
-      RATM(JW)   = RATMX(JW)
-      RATMO(JW)  = RATM(JW)
-!!
+    IF (READ_RADIATION(JW)) THEN
+      READ (MET(JW),'(///10F8.0)') NXMET2(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW),SRONX(JW)
       SRONX(JW) = SRONX(JW)*REFL
       SRON(JW)  = SRONX(JW)
       SROO(JW)  = SRON(JW)
-!!    ELSE
-!!      READ (MET(JW),'(///10F8.0)') NXMET2(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW)
-!!    END IF
+    ELSE
+      READ (MET(JW),'(///10F8.0)') NXMET2(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW)
+    END IF
     TAIR(JW)   = TAIRNX(JW)
     TDEW(JW)   = TDEWNX(JW)
     WIND(JW)   = WINDNX(JW)
@@ -7825,12 +7819,12 @@ SUBROUTINE TIME_VARYING_DATA
     CLOUDO(JW) = CLOUDNX(JW)
     IF (PHISET > 0) PHI(JW)  = PHISET
     IF (PHISET > 0) PHIO(JW) = PHISET
-!!    IF (READ_RADIATION(JW)) THEN
-      READ (MET(JW),'(10F8.0)') NXMET1(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW),SRONX(JW),RATMX(JW)
+    IF (READ_RADIATION(JW)) THEN
+      READ (MET(JW),'(10F8.0)') NXMET1(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW),SRONX(JW)
       SRONX(JW) = SRONX(JW)*REFL
-!!    ELSE
-!!      READ (MET(JW),'(10F8.0)') NXMET1(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW)
-!!    END IF
+    ELSE
+      READ (MET(JW),'(10F8.0)') NXMET1(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW)
+    END IF
     IF (READ_EXTINCTION(JW)) THEN
       EXT(JW) = NPT; NPT = NPT+1
       OPEN (EXT(JW),FILE=EXTFN(JW),STATUS='OLD')     
@@ -8079,17 +8073,14 @@ ENTRY READ_INPUT_DATA (NXTVD)
       CLOUD(JW)  = CLOUDNX(JW)
       CLOUDO(JW) = CLOUDNX(JW)
       NXMET2(JW) = NXMET1(JW)
-!!      IF (READ_RADIATION(JW)) THEN
-        RATM(JW) = RATMX(JW)
-        RATMO(JW)= RATM(JW)
-!!
+      IF (READ_RADIATION(JW)) THEN
         SRON(JW)  = SRONX(JW)
         SROO(JW)  = SRON(JW)
-        READ (MET(JW),'(7F8.0)') NXMET1(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW),SRONX(JW),RATMX(JW)
+        READ (MET(JW),'(7F8.0)') NXMET1(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW),SRONX(JW)
         SRONX(JW) = SRONX(JW)*REFL
-!!      ELSE
-!!        READ (MET(JW),'(6F8.0)') NXMET1(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW)
-!!      END IF
+      ELSE
+        READ (MET(JW),'(6F8.0)') NXMET1(JW),TAIRNX(JW),TDEWNX(JW),WINDNX(JW),PHINX(JW),CLOUDNX(JW)
+      END IF
     END DO
     NXTVD = MIN(NXTVD,NXMET1(JW))
     IF (READ_EXTINCTION(JW)) THEN
@@ -8448,12 +8439,7 @@ ENTRY INTERPOLATE_INPUTS
       END IF
       TAIR(JW)  = (1.0-RATIO)*TAIRNX(JW) +RATIO*TAIRO(JW)
       CLOUD(JW) = (1.0-RATIO)*CLOUDNX(JW)+RATIO*CLOUDO(JW)
-!!
-      RATM(JW) = (1.0-RATIO)*RATMX(JW)+RATIO*RATMO(JW)
-     
-!!      IF (READ_RADIATION(JW)) SRON(JW) = (1.0-RATIO)*SRONX(JW)+RATIO*SROO(JW)
-      SRON(JW) = (1.0-RATIO)*SRONX(JW)+RATIO*SROO(JW)
-
+      IF (READ_RADIATION(JW)) SRON(JW) = (1.0-RATIO)*SRONX(JW)+RATIO*SROO(JW)
     END IF
     IF (INTERP_EXTINCTION(JW)) THEN
       RATIO     = (NXEXT1(JW)-JDAY)/(NXEXT1(JW)-NXEXT2(JW))
@@ -8568,7 +8554,6 @@ ENTRY DEALLOCATE_TIME_VARYING_DATA
   DEALLOCATE (NXEXT1, NXEXT2, CTRO,   CINO,   QOUTO,  CDTRO,  TUHO,   TDHO,   QSTRO,  CTRNX,  CINNX,  QOUTNX, CDTRNX, CPRNX)
   DEALLOCATE (TUHNX, TDHNX,   QSTRNX, CUHO,   CDHO,   CUHNX,  CDHNX)
   DEALLOCATE (INFLOW_CONST,   TRIB_CONST,     DTRIB_CONST,    PRECIP_CONST)
-  DEALLOCATE (RATMX)
 RETURN
 END SUBROUTINE TIME_VARYING_DATA
 
