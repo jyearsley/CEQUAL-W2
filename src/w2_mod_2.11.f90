@@ -868,12 +868,11 @@ write(*,*) 'SNPFN ',SNPFN
         DH_INTERNAL(JB)    = .FALSE.
         UH_EXTERNAL(JB)    = .FALSE.
         DH_EXTERNAL(JB)    = .FALSE.
-        DIST_TRIBS(JB)     = DTRC(JB).EQ.' ON'
+        DIST_TRIBS(JB)     = .FALSE.
         SEL_WITHDRAWAL(JB) = SWC(JB).EQ.' ON'
         DO JS=1,NSTR(JB)
           POINT_SINK(JS,JB) = SINK(JS,JB).EQ.'   POINT'
         END DO
-        IF (UH_EXTERNAL(JB).OR.DH_EXTERNAL(JB)) HEAD_BOUNDARY = .TRUE.
       END DO
 
 !**** Convert rates from per-day to per-second
@@ -1063,8 +1062,6 @@ write(*,*) 'SNPFN ',SNPFN
 
 !****** Boundary bottom layers
 
-        IF (UH_EXTERNAL(JB)) KB(IUT-1) = KB(IUT)
-        IF (DH_EXTERNAL(JB)) KB(ID+1)  = KB(ID)
         IF (UH_INTERNAL(JB)) KB(IUT-1) = MIN(KB(UHS(JB)),KB(IUT))
         IF (DH_INTERNAL(JB)) KB(ID+1)  = MIN(KB(DHS(JB)),KB(ID))
 
@@ -1626,12 +1623,6 @@ write(*,*) 'SNPFN ',SNPFN
               END IF
             END DO
           END IF
-          IF (DIST_TRIBS(JB)) THEN
-            DO I=IU,ID
-              QDT(I)    = QDTR(JB)*B(KT,I)*DLX(I)/AKBR(KT,JB)
-              QSS(KT,I) = QSS(KT,I)+QDT(I)
-            END DO
-          END IF
           IF (WITHDRAWALS) THEN
             DO JW=1,NWD
               IF (JB.EQ.JBWD(JW)) THEN
@@ -1702,52 +1693,7 @@ write(*,*) 'SNPFN ',SNPFN
                 T2(K,IUT)  = T2(K,UHS(JB))
                 RHO(K,IUT) = RHO(K,UHS(JB))
               END DO
-            ELSE IF (UH_EXTERNAL(JB)) THEN
-              DO K=KT,KB(IUT)
-                DO JC=1,NAC
-                  C1S(K,IUT,CN(JC)) = CUH(K,CN(JC),JB)
-                  C1(K,IUT,CN(JC))  = CUH(K,CN(JC),JB)
-                  C2(K,IUT,CN(JC))  = CUH(K,CN(JC),JB)
-                END DO
-                T1(K,IUT)  = TUH(K,JB)
-                T2(K,IUT)  = TUH(K,JB)
-                IF (CONSTITUENTS) THEN
-                  RHO(K,IUT) = DENSITY (T2(K,IUT),SS(K,IUT),TDS(K,IUT))
-                ELSE
-                  RHO(K,IUT) = DENSITY (T2(K,IUT),0.0,0.0)
-                END IF
-              END DO
             END IF
-          IF (DN_HEAD(JB)) THEN
-            IDT = ID+1
-            IF (DH_INTERNAL(JB)) THEN
-              DO K=KT,KB(IDT)
-                DO JC=1,NAC
-                  C1S(K,IDT,CN(JC)) = C1S(K,DHS(JB),CN(JC))
-                  C1(K,IDT,CN(JC))  = C1S(K,DHS(JB),CN(JC))
-                  C2(K,IDT,CN(JC))  = C1S(K,DHS(JB),CN(JC))
-                END DO
-                T1(K,IDT)  = T2(K,DHS(JB))
-                T2(K,IDT)  = T2(K,DHS(JB))
-                RHO(K,IDT) = RHO(K,DHS(JB))
-              END DO
-            ELSE IF (DH_EXTERNAL(JB)) THEN
-              DO K=KT,KB(IDT)
-                DO JC=1,NAC
-                  C1S(K,IDT,CN(JC)) = CDH(K,CN(JC),JB)
-                  C1(K,IDT,CN(JC))  = CDH(K,CN(JC),JB)
-                  C2(K,IDT,CN(JC))  = CDH(K,CN(JC),JB)
-                END DO
-                T1(K,IDT)  = TDH(K,JB)
-                T2(K,IDT)  = TDH(K,JB)
-                IF (CONSTITUENTS) THEN
-                  RHO(K,IDT) = DENSITY (T2(K,IDT),SS(K,IDT),TDS(K,IDT))
-                ELSE
-                  RHO(K,IDT) = DENSITY (T2(K,IDT),0.0,0.0)
-                END IF
-              END DO
-            END IF
-          END IF
 
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
 !*                          Task 2.2.2: Momentum Terms                      **
@@ -1963,21 +1909,6 @@ write(*,*) 'SNPFN ',SNPFN
               D(ID) = D(ID)+QOUT(K,JB)
             END DO
           END IF
-          IF (DN_HEAD(JB)) THEN
-            BHRHO(ID) = BHKT2(ID+1)/RHO(KT,ID+1)+BHKT2(ID)/RHO(KT,ID)
-            DO K=KT+1,KB(ID+1)
-              BHRHO(ID) = BHRHO(ID)+(BH(K,ID+1)/RHO(K,ID+1)+BH(K,ID)  &
-                          /RHO(K,ID))
-            END DO
-            D(ID) = U(KT,ID)*BHRKT2(ID)-U(KT,ID-1)*BHRKT2(ID-1)  &
-                    -QSS(KT,ID)
-            F(ID) = -SB(KT,ID)+ST(KT,ID)-HDG(KT,ID)
-            DO K=KT+1,KB(ID)
-              D(ID) = D(ID)+(U(K,ID)*BHR(K,ID)-U(K,ID-1)*BHR(K,ID-1)  &
-                      -QSS(K,ID))
-              F(ID) = F(ID)+(-SB(K,ID)+ST(K,ID)-HDG(K,ID))
-            END DO
-          END IF
         END DO
         DO JB=1,NBP
           IU = CUS(JB)
@@ -1986,9 +1917,7 @@ write(*,*) 'SNPFN ',SNPFN
 !******** Boundary surface elevations
 
           IF (UH_INTERNAL(JB)) Z(IU-1) = Z(UHS(JB))
-          IF (UH_EXTERNAL(JB)) Z(IU-1) = EL(KT)-ELUH(JB)
           IF (DH_INTERNAL(JB)) Z(ID+1) = Z(DHS(JB))
-          IF (DH_EXTERNAL(JB)) Z(ID+1) = EL(KT)-ELDH(JB)
 
 !******** Tridiagonal coefficients
 
@@ -1999,7 +1928,6 @@ write(*,*) 'SNPFN ',SNPFN
                    +BHRHO(I-1)*0.5/DLXR(I-1))+DLX(I)*B(KTI(I),I)
             D(I) = DLT*(D(I)+DLT*(F(I)-F(I-1)))+DLX(I)*B(KTI(I),I)*Z(I)
           END DO
-          IF (DN_HEAD(JB)) D(ID) = D(ID)-C(ID)*Z(ID+1)
 
 !******** Implicit water surface elevation
 
@@ -2067,7 +1995,6 @@ write(*,*) 'SNPFN ',SNPFN
 
           IUT = IU
           IDT = ID
-          IF (DN_HEAD(JB)) IDT = ID+1
 
 !******** Pressures
 
@@ -2161,14 +2088,6 @@ write(*,*) 'SNPFN ',SNPFN
               U(K,ID) = QOUT(K,JB)/BHRT
             END DO
           END IF
-          IF (DN_HEAD(JB)) THEN
-            U(KT,ID) = (BHRKT2(ID)*U(KT,ID)+DLT*(-SB(KT,ID)+ST(KT,ID)  &
-                       -HPG(KT,ID)))/BHRKT1(ID)
-            DO K=KT+1,KB(ID+1)
-              U(K,ID) = (BHR(K,ID)*U(K,ID)+DLT*(-SB(K,ID)+ST(K,ID)  &
-                        -HPG(K,ID)))/BHR(K,ID)
-            END DO
-          END IF
 
 !******** Horizontal velocities
 
@@ -2215,14 +2134,6 @@ write(*,*) 'SNPFN ',SNPFN
             END DO
           END DO
 
-!******** Head boundary flows
-
-          IF (DN_HEAD(JB)) THEN
-            QDH1(KT,JB) = U(KT,ID)*BHRKT1(ID)
-            DO K=KT+1,KB(ID+1)
-              QDH1(K,JB) = U(K,ID)*BHR(K,ID)
-            END DO
-          END IF
 
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
 !*                        Task 2.2.5: Vertical Velocities                   **
@@ -2550,18 +2461,6 @@ write(*,*) 'SNPFN ',SNPFN
               END IF
             END DO
           END IF
-          IF (DIST_TRIBS(JB)) THEN
-            DO I=IU,ID
-              IF (QDT(I).GE.0.0) THEN
-                TSS(KT,I) = TSS(KT,I)+TDTR(JB)*QDT(I)
-                TSSDT(JB) = TSSDT(JB)+TDTR(JB)*QDT(I)*DLT
-              ELSE
-                TSS(KT,I) = TSS(KT,I)+T1(KT,I)*QDT(I)
-                TSSDT(JB) = TSSDT(JB)+T1(KT,I)*QDT(I)*DLT
-              END IF
-              VOLDT(JB) = VOLDT(JB)+QDT(I)*DLT
-            END DO
-          END IF
           IF (WITHDRAWALS) THEN
             DO JW=1,NWD
               IF (JB.EQ.JBWD(JW)) THEN
@@ -2592,29 +2491,6 @@ write(*,*) 'SNPFN ',SNPFN
               TSS(K,UHS(JB))  = TSS(K,UHS(JB))-TSSUH2(K,JB)/DLT
               TSSUH(JBUH(JB)) = TSSUH(JBUH(JB))-TSSUH2(K,JB)
               VOLUH(JBUH(JB)) = VOLUH(JBUH(JB))-QUH2(K,JB)
-            END DO
-          END IF
-          IF (DN_HEAD(JB)) THEN
-            IDT = ID+1
-            IF (QDH1(KT,JB).GE.0.0) IDT = ID
-            TSSDH1(KT,JB) = T2(KT,IDT)*QDH1(KT,JB)
-            TSS(KT,ID)    = TSS(KT,ID)-TSSDH1(KT,JB)
-            TSSDH(JB)     = TSSDH(JB)-TSSDH1(KT,JB)*DLT
-            VOLDH(JB)     = VOLDH(JB)-QDH1(KT,JB)*DLT
-            DO K=KT+1,KB(ID+1)
-              IDT = ID+1
-              IF (QDH1(K,JB).GE.0.0) IDT = ID
-              TSSDH1(K,JB) = T2(K,IDT)*QDH1(K,JB)
-              TSS(K,ID)    = TSS(K,ID)-TSSDH1(K,JB)
-              TSSDH(JB)    = TSSDH(JB)-TSSDH1(K,JB)*DLT
-              VOLDH(JB)    = VOLDH(JB)-QDH1(K,JB)*DLT
-            END DO
-          END IF
-          IF (DH_INTERNAL(JB)) THEN
-            DO K=KT,KB(ID+1)
-              TSS(K,DHS(JB))  = TSS(K,DHS(JB))+TSSDH2(K,JB)/DLT
-              TSSDH(JBDH(JB)) = TSSDH(JBDH(JB))+TSSDH2(K,JB)
-              VOLDH(JBDH(JB)) = VOLDH(JBDH(JB))+QDH2(K,JB)
             END DO
           END IF
 
@@ -2903,11 +2779,6 @@ write(*,*) 'SNPFN ',SNPFN
                   END IF
                 END DO
               END IF
-              IF (DIST_TRIBS(JB)) THEN
-                DO I=IU,ID
-                  CSSB(KT,I,JC) = CSSB(KT,I,JC)+CDTR(JC,JB)*QDT(I)
-                END DO
-              END IF
               IF (WITHDRAWALS) THEN
                 DO JW=1,NWD
                   IF (JB.EQ.JBWD(JW)) THEN
@@ -2933,24 +2804,6 @@ write(*,*) 'SNPFN ',SNPFN
                   CSSB(K,ID,JC) = CSSB(K,ID,JC)-QOUT(K,JB)  &
                                   *C1S(K,ID,JC)
                 END DO
-              END IF
-              IF (DN_HEAD(JB)) THEN
-                IDT = ID+1
-                IF (QDH1(KT,JB).GE.0.0) IDT = ID
-                CSSDH1(KT,JC,JB) = C1S(KT,IDT,JC)*QDH1(KT,JB)
-                CSSB(KT,ID,JC)   = CSSB(KT,ID,JC)-CSSDH1(KT,JC,JB)
-                DO K=KT+1,KB(ID+1)
-                  IDT = ID+1
-                  IF (QDH1(K,JB).GE.0.0) IDT = ID
-                  CSSDH1(K,JC,JB) = C1S(K,IDT,JC)*QDH1(K,JB)
-                  CSSB(K,ID,JC)   = CSSB(K,ID,JC)-CSSDH1(K,JC,JB)
-                END DO
-                IF (DH_INTERNAL(JB)) THEN
-                  I = DHS(JB)
-                  DO K=KT,KB(ID+1)
-                    CSSB(K,I,JC) = CSSB(K,I,JC)+CSSDH2(K,JC,JB)/DLT
-                  END DO
-                END IF
               END IF
             END DO
           END DO
@@ -3104,25 +2957,11 @@ write(*,*) 'SNPFN ',SNPFN
             DO I=IU-1,ID
               BHRKT1(I) = (BHKT1(I)+BHKT1(I+1))*0.5
             END DO
-            IF (DN_HEAD(JB)) THEN
-              BHSUM           = BHRKT1(ID)+BHR(KT+1,ID)
-              QDH1(KT,JB)     = QDH1(KT+1,JB)*BHRKT1(ID)/BHSUM
-              QDH1(KT+1,JB)   = QDH1(KT+1,JB)*BHR(KT+1,ID)/BHSUM
-              TSSDH1(KT,JB)   = TSSDH1(KT+1,JB)*BHRKT1(ID)/BHSUM
-              TSSDH1(KT+1,JB) = TSSDH1(KT+1,JB)*BHR(KT+1,ID)/BHSUM
-              DO JC=1,NAC
-                CSSDH1(KT,CN(JC),JB)   = CSSDH1(KT+1,CN(JC),JB)  &
-                                         *BHRKT1(ID)/BHSUM
-                CSSDH1(KT+1,CN(JC),JB) = CSSDH1(KT+1,CN(JC),JB)  &
-                                         *BHR(KT+1,ID)/BHSUM
-              END DO
-            END IF
             DO I=IU,ID-1
               DX(KT,I) = DXI
             END DO
             IUT = IU
             IDT = ID-1
-            IF (DN_HEAD(JB)) IDT = ID
             DO I=IUT,IDT
               AZ(KT,I)  = AZMIN
               SAZ(KT,I) = AZMIN
@@ -3190,7 +3029,6 @@ write(*,*) 'SNPFN ',SNPFN
               END IF
               IU      = IUT
               CUS(JB) = IU
-              IF (UH_EXTERNAL(JB)) KB(IU-1) = KB(IU)
               IF (UH_INTERNAL(JB)) KB(IU-1) = MIN(KB(UHS(JB)),KB(IU))
             END IF
 
@@ -3249,15 +3087,6 @@ write(*,*) 'SNPFN ',SNPFN
             DO I=IU-1,ID
               BHRKT1(I) = (BHKT1(I)+BHKT1(I+1))*0.5
             END DO
-            IF (DN_HEAD(JB)) THEN
-              QDH1(KT,JB)   = QDH1(KT,JB)+QDH1(KT-1,JB)
-              TSSDH1(KT,JB) = TSSDH1(KT-1,JB)+TSSDH1(KT,JB)
-              DO JC=1,NAC
-                CSSDH1(KT,CN(JC),JB) = CSSDH1(KT-1,CN(JC),JB)  &
-                                       +CSSDH1(KT,CN(JC),JB)
-              END DO
-            END IF
-
 !****!***** Upstream active segment
 
             IUT = US(JB)
@@ -3327,7 +3156,6 @@ write(*,*) 'SNPFN ',SNPFN
               BHKT1(IU-1)  = B(KTI(IU),IU-1)*EL(KT)-(EL(KTI(I)+1)-Z(IU))
               BKT(IU-1)    = BHKT1(IU-1)/HKT1(IU-1)
               BHRKT1(IU-1) = (BHKT1(IU-1)+BHKT1(IU))*0.5
-              IF (UH_EXTERNAL(JB)) KB(IU-1) = KB(IU)
               IF (UH_INTERNAL(JB)) KB(IU-1) = MIN(KB(UHS(JB)),KB(IU))
             END IF
 
@@ -3568,12 +3396,6 @@ write(*,*) 'SNPFN ',SNPFN
                                  DEG
               END IF
             END DO
-            DO JB=1,NBP
-              IF (DIST_TRIBS(JB)) THEN
-                WRITE (SNP,3070)
-                WRITE (SNP,3080) JB,QDTR(JB),TDTR(JB),DEG
-              END IF
-            END DO
             IF (TRIBUTARIES) THEN
               WRITE (SNP,3090) (ITR(JT),JT=1,NTR)
               WRITE (SNP,3100) (KTTR(JT),KBTR(JT),JT=1,NTR)
@@ -3608,25 +3430,11 @@ write(*,*) 'SNPFN ',SNPFN
                 WRITE (SNP,3220) JT,(CNAME1(TRCN(JC)),CTR(TRCN(JC),JT),  &
                                  CUNIT2(JC),JC=1,NACTR)
               END DO
-              DO JB=1,NBP
-                IF (DIST_TRIBS(JB)) THEN
-                  WRITE (SNP,3230) JB,(CNAME1(DTCN(JC)),  &
-                                   CDTR(DTCN(JC),JB),CUNIT2(JC),  &
-                                   JC=1,NACDT)
-                END IF
-              END DO
             END IF
             IF (EVAPORATION.OR.PRECIPITATION) WRITE(SNP,3240) 'Surface',  &
                                               ' Calculations'
             IF (EVAPORATION)   WRITE (SNP,3250) (JB,EVBR(JB),JB=1,NBP)
             IF (PRECIPITATION) WRITE (SNP,3260) (JB,QPR(JB),JB=1,NBP)
-            IF (HEAD_BOUNDARY) THEN
-              WRITE (SNP,3270)
-              DO JB=1,NBP
-                IF (UH_EXTERNAL(JB)) WRITE (SNP,3280) JB,ELUH(JB)
-                IF (DH_EXTERNAL(JB)) WRITE (SNP,3290) JB,ELDH(JB)
-              END DO
-            END IF
             IF (VOLUME_BALANCE) THEN
               WRITE (SNP,3300)
               DO JB=1,NBP
@@ -3666,24 +3474,9 @@ write(*,*) 'SNPFN ',SNPFN
               END DO
             END IF
             WRITE (SNP,3370) 'Geometry',KT,ELKT,(JB,CUS(JB),JB=1,NBP)
-            IF (LASERJET_II) THEN
-              WRITE (SNP,'(A50)') ESC//'&l1o4.8C'//ESC//'&a8L'
-            ELSE IF (LASERJET_III.OR.LASERJET_IV) THEN
-              WRITE (SNP,'(A50)') ESC//'&l1o4e4.8C'//ESC//'&a8L'
-            END IF
+!
             CALL PRINT_GRID (JDAY,GDAY,MONTH,YEAR)
-            IF (LASERJET_II) THEN
-              WRITE (SNP,'(''+'',A80)') ESC//'E'//ESC//'(s16.66H'//ESC//  &
-                                       '(10U'//ESC//'&a8L'//ESC//'&l7E'
-            ELSE IF (LASERJET_III) THEN
-              WRITE (SNP,'(''+'',A80)') ESC//'E'//ESC//'&l6.0C'//ESC//  &
-                                       '(s0p16.67h8.5v0s0b0T'//ESC//  &
-                                       '(10U'//ESC//'&a8L'//ESC//'&l7E'
-            ELSE IF (LASERJET_IV) THEN
-              WRITE (SNP,'(A80)') ESC//'E'//ESC//'&l6.0c7E'//ESC//  &
-                                  '(s0p16.67h8.5v0s0b0T'//ESC//'(10U'  &
-                                  //ESC//'&a8L'
-            END IF
+!
           END IF
         END IF
 
@@ -4489,54 +4282,6 @@ write(*,*) 'SNPFN ',SNPFN
                 READ (PRC(JB),1000)
               END IF
             END IF
-            IF (DIST_TRIBS(JB)) THEN
-              DTQ(JB) = UNIT
-              UNIT    = UNIT+1
-              DTT(JB) = UNIT
-              UNIT    = UNIT+1
-              OPEN (DTQ(JB),FILE=QDTFN(JB),STATUS='OLD')
-              OPEN (DTT(JB),FILE=TDTFN(JB),STATUS='OLD')
-              READ (DTQ(JB),1000)
-              READ (DTT(JB),1000)
-              IF (CONSTITUENTS) THEN
-                DTC(JB) = UNIT
-                UNIT    = UNIT+1
-                OPEN (DTC(JB),FILE=CDTFN(JB),STATUS='OLD')
-                READ (DTC(JB),1000)
-              END IF
-            END IF
-            IF (UH_EXTERNAL(JB)) THEN
-              UHE(JB) = UNIT
-              UNIT    = UNIT+1
-              UHT(JB) = UNIT
-              UNIT    = UNIT+1
-              OPEN (UHE(JB),FILE=EUHFN(JB),STATUS='OLD')
-              OPEN (UHT(JB),FILE=TUHFN(JB),STATUS='OLD')
-              READ (UHE(JB),1000)
-              READ (UHT(JB),1000)
-              IF (CONSTITUENTS) THEN
-                UHC(JB) = UNIT
-                UNIT    = UNIT+1
-                OPEN (UHC(JB),FILE=CUHFN(JB),STATUS='OLD')
-                READ (UHC(JB),1000)
-              END IF
-            END IF
-            IF (DH_EXTERNAL(JB)) THEN
-              DHE(JB) = UNIT
-              UNIT    = UNIT+1
-              DHT(JB) = UNIT
-              UNIT    = UNIT+1
-              OPEN (DHE(JB),FILE=EDHFN(JB),STATUS='OLD')
-              OPEN (DHT(JB),FILE=TDHFN(JB),STATUS='OLD')
-              READ (DHE(JB),1000)
-              READ (DHT(JB),1000)
-              IF (CONSTITUENTS) THEN
-                DHC(JB) = UNIT
-                UNIT    = UNIT+1
-                OPEN (DHC(JB),FILE=CDHFN(JB),STATUS='OLD')
-                READ (DHC(JB),1000)
-              END IF
-            END IF
           END DO
           IF (WATER_BALANCE) THEN
             ELO  = UNIT
@@ -4720,49 +4465,6 @@ write(*,*) 'SNPFN ',SNPFN
 
 !******** Distributed tributaries
 
-          IF (DIST_TRIBS(JB)) THEN
-
-!****!***** Inflow
-
-            IF (JDAY.GE.NXQDT1(JB)) THEN
-              DO WHILE (JDAY.GE.NXQDT1(JB))
-                NXQDT2(JB) = NXQDT1(JB)
-                QDTR(JB)   = QDTRNX(JB)
-                QDTRO(JB)  = QDTRNX(JB)
-                READ (DTQ(JB),1020) NXQDT1(JB),QDTRNX(JB)
-              END DO
-            END IF
-            NXTVD = MIN(NXTVD,NXQDT1(JB))
-
-!****!***** Temperature
-
-            IF (JDAY.GE.NXTDT1(JB)) THEN
-              DO WHILE (JDAY.GE.NXTDT1(JB))
-                NXTDT2(JB) = NXTDT1(JB)
-                TDTR(JB)   = TDTRNX(JB)
-                TDTRO(JB)  = TDTRNX(JB)
-                READ (DTT(JB),1020) NXTDT1(JB),TDTRNX(JB)
-              END DO
-            END IF
-            NXTVD = MIN(NXTVD,NXTDT1(JB))
-
-!****!***** Constituent concentrations
-
-            IF (CONSTITUENTS) THEN
-              IF (JDAY.GE.NXCDT1(JB)) THEN
-                DO WHILE (JDAY.GE.NXCDT1(JB))
-                  NXCDT2(JB) = NXCDT1(JB)
-                  DO JC=1,NACDT
-                    CDTR(DTCN(JC),JB)  = CDTRNX(DTCN(JC),JB)
-                    CDTRO(DTCN(JC),JB) = CDTRNX(DTCN(JC),JB)
-                  END DO
-                  READ (DTC(JB),1030) NXCDT1(JB),(CDTRNX(DTCN(JC),JB),  &
-                                      JC=1,NACDT)
-                END DO
-              END IF
-              NXTVD = MIN(NXTVD,NXCDT1(JB))
-            END IF
-          END IF
 
 !******** Precipitation
 
@@ -4800,110 +4502,7 @@ write(*,*) 'SNPFN ',SNPFN
               NXTVD = MIN(NXTVD,NXCPR1(JB))
             END IF
           END IF
-
-!******** Upstream head conditions
-
-          IF (UH_EXTERNAL(JB)) THEN
-
-!****!***** Elevations
-
-            IF (JDAY.GE.NXEUH1(JB)) THEN
-              DO WHILE (JDAY.GE.NXEUH1(JB))
-                NXEUH2(JB) = NXEUH1(JB)
-                ELUH(JB)   = ELUHNX(JB)
-                ELUHO(JB)  = ELUHNX(JB)
-                READ (UHE(JB),1020) NXEUH1(JB),ELUHNX(JB)
-              END DO
-            END IF
-            NXTVD = MIN(NXTVD,NXEUH1(JB))
-
-!****!***** Temperatures
-
-            IF (JDAY.GE.NXTUH1(JB)) THEN
-              DO WHILE (JDAY.GE.NXTUH1(JB))
-                NXTUH2(JB) = NXTUH1(JB)
-                DO K=2,KMP-1
-                  TUH(K,JB)  = TUHNX(K,JB)
-                  TUHO(K,JB) = TUHNX(K,JB)
-                END DO
-                READ (UHT(JB),1020) NXTUH1(JB),(TUHNX(K,JB),K=2,KMP-1)
-              END DO
-            END IF
-            NXTVD = MIN(NXTVD,NXTUH1(JB))
-
-!****!***** Constituent concentrations
-
-            IF (CONSTITUENTS) THEN
-              IF (JDAY.GE.NXCUH1(JB)) THEN
-                DO WHILE (JDAY.GE.NXCUH1(JB))
-                  NXCUH2(JB) = NXCUH1(JB)
-                  DO JC=1,NAC
-                    DO K=2,KMP-1
-                      CUH(K,CN(JC),JB)  = CUHNX(K,CN(JC),JB)
-                      CUHO(K,CN(JC),JB) = CUHNX(K,CN(JC),JB)
-                    END DO
-                  END DO
-                  DO JC=1,NAC
-                    READ (UHC(JB),1020) NXCUH1(JB),(CUHNX(K,CN(JC),JB),  &
-                                        K=2,KMP-1)
-                  END DO
-                END DO
-              END IF
-              NXTVD = MIN(NXTVD,NXCUH1(JB))
-            END IF
-          END IF
-
-!******** Downstream head
-
-          IF (DH_EXTERNAL(JB)) THEN
-
-!****!***** Elevation
-
-            IF (JDAY.GE.NXEDH1(JB)) THEN
-              DO WHILE (JDAY.GE.NXEDH1(JB))
-                NXEDH2(JB) = NXEDH1(JB)
-                ELDH(JB)   = ELDHNX(JB)
-                ELDHO(JB)  = ELDHNX(JB)
-                READ (DHE(JB),1020) NXEDH1(JB),ELDHNX(JB)
-              END DO
-            END IF
-            NXTVD = MIN(NXTVD,NXEDH1(JB))
-
-!****!***** Temperature
-
-            IF (JDAY.GE.NXTDH1(JB)) THEN
-              DO WHILE (JDAY.GE.NXTDH1(JB))
-                NXTDH2(JB) = NXTDH1(JB)
-                DO K=2,KMP-1
-                  TDH(K,JB)  = TDHNX(K,JB)
-                  TDHO(K,JB) = TDHNX(K,JB)
-                END DO
-                READ (DHT(JB),1020) NXTDH1(JB),(TDHNX(K,JB),K=2,KMP-1)
-              END DO
-            END IF
-            NXTVD = MIN(NXTVD,NXTDH1(JB))
-
-!****!***** Constituents
-
-            IF (CONSTITUENTS) THEN
-              IF (JDAY.GE.NXCDH1(JB)) THEN
-                DO WHILE (JDAY.GE.NXCDH1(JB))
-                  NXCDH2(JB) = NXCDH1(JB)
-                  DO JC=1,NAC
-                    DO K=2,KMP-1
-                      CDH(K,CN(JC),JB)  = CDHNX(K,CN(JC),JB)
-                      CDHO(K,CN(JC),JB) = CDHNX(K,CN(JC),JB)
-                    END DO
-                  END DO
-                  DO JC=1,NAC
-                    READ (DHC(JB),1020) NXCDH1(JB),(CDHNX(K,CN(JC),JB),  &
-                                        K=2,KMP-1)
-                  END DO
-                END DO
-              END IF
-              NXTVD = MIN(NXTVD,NXCDH1(JB))
-            END IF
-          END IF
+!
         END DO
 
 !****** Dead sea case
@@ -5056,67 +4655,6 @@ write(*,*) 'SNPFN ',SNPFN
             END IF
           END IF
 
-!******** Distributed tributaries
-
-          IF (DIST_TRIBS(JB)) THEN
-            IF (INTERP_DTRIBS) THEN
-              QRATIO = (NXQDT1(JB)-JDAY)/(NXQDT1(JB)-NXQDT2(JB))
-              TRATIO = (NXTDT1(JB)-JDAY)/(NXTDT1(JB)-NXTDT2(JB))
-              IF (CONSTITUENTS) THEN
-                CRATIO = (NXCDT1(JB)-JDAY)/(NXCDT1(JB)-NXCDT2(JB))
-              END IF
-              QDTR(JB) = (1.0-QRATIO)*QDTRNX(JB)+QRATIO*QDTRO(JB)
-              TDTR(JB) = (1.0-TRATIO)*TDTRNX(JB)+TRATIO*TDTRO(JB)
-              DO JC=1,NACDT
-                CDTR(DTCN(JC),JB) = (1.0-CRATIO)*CDTRNX(DTCN(JC),JB)  &
-                                    +CRATIO*CDTRO(DTCN(JC),JB)
-              END DO
-            END IF
-          END IF
-
-!******** Upstream head conditions
-
-          IF (UH_EXTERNAL(JB)) THEN
-            IF (INTERP_HEAD) THEN
-              HRATIO = (NXEUH1(JB)-JDAY)/(NXEUH1(JB)-NXEUH2(JB))
-              TRATIO = (NXTUH1(JB)-JDAY)/(NXTUH1(JB)-NXTUH2(JB))
-              IF (CONSTITUENTS) THEN
-                CRATIO = (NXCUH1(JB)-JDAY)/(NXCUH1(JB)-NXCUH2(JB))
-              END IF
-              ELUH(JB) = (1.0-HRATIO)*ELUHNX(JB)+HRATIO*ELUHO(JB)
-              DO K=2,KMP-1
-                TUH(K,JB) = (1.0-TRATIO)*TUHNX(K,JB)+TRATIO*TUHO(K,JB)
-              END DO
-              DO JC=1,NAC
-                DO K=2,KMP-1
-                  CUH(K,CN(JC),JB) = (1.0-CRATIO)*CUHNX(K,CN(JC),JB)  &
-                                     +CRATIO*CUHO(K,CN(JC),JB)
-                END DO
-              END DO
-            END IF
-          END IF
-
-!******** Downstream head
-
-          IF (DH_EXTERNAL(JB)) THEN
-            IF (INTERP_HEAD) THEN
-              HRATIO = (NXEDH1(JB)-JDAY)/(NXEDH1(JB)-NXEDH2(JB))
-              TRATIO = (NXTDH1(JB)-JDAY)/(NXTDH1(JB)-NXTDH2(JB))
-              IF (CONSTITUENTS) THEN
-                CRATIO = (NXCDH1(JB)-JDAY)/(NXCDH1(JB)-NXCDH2(JB))
-              END IF
-              ELDH(JB) = (1.0-HRATIO)*ELDHNX(JB)+HRATIO*ELDHO(JB)
-              DO K=2,KMP-1
-                TDH(K,JB) = (1.0-TRATIO)*TDHNX(K,JB)+TRATIO*TDHO(K,JB)
-              END DO
-              DO JC=1,NAC
-                DO K=2,KMP-1
-                  CDH(K,CN(JC),JB) = (1.0-CRATIO)*CDHNX(K,CN(JC),JB)  &
-                                     +CRATIO*CDHO(K,CN(JC),JB)
-                END DO
-              END DO
-            END IF
-          END IF
         END DO
       RETURN
       END
