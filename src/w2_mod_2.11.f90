@@ -659,37 +659,11 @@ write(*,*) 'SNPFN ',SNPFN
         IF (LONG_CONC(JC).AND..NOT.RESTART_IN) OPEN_LPR = .TRUE.
       END DO
 
-!**** Restart data
-
-      IF (RESTART_IN) THEN
-        OPEN (RSI,FILE=RSIFN,STATUS='OLD')
-        READ (RSI,*) KT,     NIT,    NV,     KMIN,   IMIN
-        READ (RSI,*) DLTDP,  SNPDP,  TSRDP,  VPLDP,  PRFDP,  &
-                     CPLDP,  SPRDP,  RSODP,  WSCDP,  SCRDP
-        READ (RSI,*) JDAY,   JDAYG,  YEAR,   ELTM,   DLT,  &
-                     DLTAV,  MINDLT, JDMIN,  CURMAX
-        READ (RSI,*) NXTMSN, NXTMTS, NXTMPR, NXTMCP, NXTMVP,  &
-                     NXTMRS, NXTMSC, NXTMSP
-        READ (RSI,*) VOLIN,  VOLOUT, VOLUH,  VOLDH,  VOLPR,  &
-                     VOLTR,  VOLDT,  VOLWD,  VOLEV,  VOLSBR,  &
-                     CMBRT
-        READ (RSI,*) TSSEV,  TSSPR,  TSSTR,  TSSDT,  TSSWD,  &
-                     TSSUH,  TSSDH,  TSSIN,  TSSOUT, TSSS,  &
-                     TSSB,   TSSICE, ESBR,   ETBR,   EIBR
-        READ (RSI,*) TSSUH2, TSSDH2, CSSUH2, CSSDH2, QUH2,  &
-                     QDH2
-        READ (RSI,*) Z,      SZ,     ELWS
-        READ (RSI,*) KT,     KTI,    SKTI
-        READ (RSI,*) ICE,    ICETH
-        READ (RSI,*) U,      W,      SU,     SW,     AZ,  &
-                     T1,     T2,     C1,     C2
-      END IF
-
 !**** Close files
 
       CLOSE (CON)
       CLOSE (BTH)
-      IF (RESTART_IN) CLOSE (RSI)
+!      IF (RESTART_IN) CLOSE (RSI)
 
 !**** Input FORMATs
 
@@ -739,27 +713,26 @@ write(*,*) 'SNPFN ',SNPFN
           FETCHU(I,JB) = 0.0
           FETCHD(I,JB) = 0.0
         END DO
-        IF (.NOT.RESTART_IN) THEN
+!        IF (.NOT.RESTART_IN) THEN
           DO K=1,KMP
             U(K,I) = 0.0
             W(K,I) = 0.0
           END DO
-        END IF
+!        END IF
         DO K=1,KMP
           TSS(K,I) = 0.0
           QSS(K,I) = 0.0
           IF (CONSTITUENTS) THEN
             DO JC=1,NCP
-              IF (.NOT.RESTART_IN) THEN
+!             IF (.NOT.RESTART_IN) THEN
                 CSSB(K,I,JC) = 0.0
                 CSSK(K,I,JC) = 0.0
-              END IF
+!             END IF
             END DO
           END IF
         END DO
       END DO
       DO JB=1,NBP
-        IF (.NOT.RESTART_IN) THEN
           VOLEV(JB)  = 0.0
           VOLPR(JB)  = 0.0
           VOLTR(JB)  = 0.0
@@ -785,7 +758,6 @@ write(*,*) 'SNPFN ',SNPFN
           ESBR(JB)   = 0.0
           ETBR(JB)   = 0.0
           EIBR(JB)   = 0.0
-        END IF
         DO K=1,KMP
           AKBR(K,JB) = 0.0
         END DO
@@ -809,10 +781,8 @@ write(*,*) 'SNPFN ',SNPFN
       HMIN     = 1.0E10
       DLXMIN   = 1.0E10
       TITLE(7) = ' '
-      IF (.NOT.RESTART_IN) THEN
         KLOC = 1
         ILOC = 1
-      END IF
 
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
 !*                        Task 1.4.2: Miscellaneous Variables               **
@@ -876,13 +846,8 @@ write(*,*) 'SNPFN ',SNPFN
                         .OR.INTERP_OUTFLOW.OR.INTERP_WITHDRWL  &
                         .OR.INTERP_HEAD.OR.INTERP_MET
       LEAP_YEAR       = MOD(YEAR,4).EQ.0
-      IF (RESTART_IN) THEN
-        WINTER = .FALSE.
-        IF (JDAY.GT.300.0.OR.JDAY.LT.40.0) WINTER = .TRUE.
-      ELSE
         WINTER = .FALSE.
         IF (TMSTRT.GT.300.0.OR.TMSTRT.LT.40.0) WINTER = .TRUE.
-      END IF
       DO JT=1,NTP
         PLACE_QTR(JT)   = TRC(JT).EQ.' DENSITY'
         SPECIFY_QTR(JT) = TRC(JT).EQ.' SPECIFY'
@@ -897,12 +862,12 @@ write(*,*) 'SNPFN ',SNPFN
       DO JB=1,NBP
         UP_FLOW(JB)        = UHS(JB).EQ.0
         DN_FLOW(JB)        = DHS(JB).EQ.0
-        UP_HEAD(JB)        = UHS(JB).NE.0
-        DN_HEAD(JB)        = DHS(JB).NE.0
-        UH_INTERNAL(JB)    = UHS(JB).GT.0
-        DH_INTERNAL(JB)    = DHS(JB).GT.0
-        UH_EXTERNAL(JB)    = UHS(JB).EQ.-1
-        DH_EXTERNAL(JB)    = DHS(JB).EQ.-1
+        UP_HEAD(JB)        = .FALSE.
+        DN_HEAD(JB)        = .FALSE.
+        UH_INTERNAL(JB)    = .FALSE.
+        DH_INTERNAL(JB)    = .FALSE.
+        UH_EXTERNAL(JB)    = .FALSE.
+        DH_EXTERNAL(JB)    = .FALSE.
         DIST_TRIBS(JB)     = DTRC(JB).EQ.' ON'
         SEL_WITHDRAWAL(JB) = SWC(JB).EQ.' ON'
         DO JS=1,NSTR(JB)
@@ -937,19 +902,9 @@ write(*,*) 'SNPFN ',SNPFN
         END DO
       END IF
 
-!**** Saltwater units
-
-      IF (SALT_WATER) THEN
-        CNAME1(4) = 'Salinity         '
-        CNAME2(4) = '    Salinity, kg/m^3    '
-        CUNIT1(4) = 'kg/m^3'
-        CUNIT2(4) = 'kg/m^3'
-        CUNIT3(4) = 'kg'
-      END IF
 
 !**** Time and printout control variables
 
-      IF (.NOT.RESTART_IN) THEN
         JDAY   = TMSTRT
         JDAYG  = JDAY
         ELTM   = TMSTRT*86400.0
@@ -976,7 +931,6 @@ write(*,*) 'SNPFN ',SNPFN
         NXTMVP = VPLD(1)
         NXTMRS = RSOD(1)
         NXTMSC = SCRD(1)
-      END IF
       DO J=NWSC+1,NDP
         WSCD(J) = TMEND+1.0
       END DO
@@ -1050,9 +1004,7 @@ write(*,*) 'SNPFN ',SNPFN
       ESC = CHAR(027)
       CALL DATE_TIME (CDATE,CTIME)
       TITLE(7) = 'Model run at '//CTIME//' on '//CDATE                  !FORTRAN
-      IF (RESTART_IN) TITLE(7) = 'Model restarted at '//CTIME//     &      !FORTRAN
-                                 ' on '//CDATE                          !FORTRAN
-
+!
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
 !*                              Task 1.4.3: Geometry                        **
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
@@ -1070,7 +1022,6 @@ write(*,*) 'SNPFN ',SNPFN
 
       DO JB=1,NBP
         DO I=US(JB)-1,DS(JB)+1
-          IF (.NOT.RESTART_IN) THEN
             KT     = 2
             KTI(I) = 2
             DO WHILE (EL(KTI(I)).GT.ELWS(I))
@@ -1082,7 +1033,6 @@ write(*,*) 'SNPFN ',SNPFN
             KTI(I)  = MAX(2,KTI(I)-1)
             SKTI(I) = KTI(I)
             SZ(I)   = Z(I)
-          END IF
           K = 2
           DO WHILE (B(K,I).GT.0.0)
             KB(I) = K
@@ -1400,7 +1350,7 @@ write(*,*) 'SNPFN ',SNPFN
       DO JB=1,NBP
         IU = CUS(JB)
         ID = DS(JB)
-        IF (.NOT.RESTART_IN) THEN
+!        IF (.NOT.RESTART_IN) THEN
 
 !******** Temperature
 
@@ -1467,15 +1417,13 @@ write(*,*) 'SNPFN ',SNPFN
 
           IUT = IU
           IDT = ID-1
-          IF (UP_HEAD(JB)) IUT = IU-1
-          IF (DN_HEAD(JB)) IDT = ID
           DO I=IUT,IDT
             DO K=KT,KBMIN(I)-1
               AZ(K,I)  = AZMIN
               SAZ(K,I) = AZMIN
             END DO
           END DO
-        END IF
+!        END IF
 
 !****** Density
 
@@ -1527,163 +1475,23 @@ write(*,*) 'SNPFN ',SNPFN
 
 !**** Open output files (contains UNIX FORTRAN specific I/O)
 
-      IF (RESTART_IN) THEN
-        IF (SNAPSHOT)    OPEN (SNP,FILE=SNPFN,  &
-                               ACCESS='APPEND')                         !FORTRAN
-!*kevin's mod: open matlab output file
-!*for now, just attach it with the snapshot output, 
-!*but later figure out how to add this to the control file
-!        IF (SNAPSHOT)    OPEN (8,FILE=SNPFN,                            !9-3-98
-!                               ACCESS='APPEND')                         !FORTRAN
-        IF (TIME_SERIES) OPEN (TSR,FILE=TSRFN,  &
-                               ACCESS='APPEND')                         !FORTRAN
-        IF (VECTOR)      OPEN (VPL,FILE=VPLFN,  &
-                               ACCESS='APPEND')                         !FORTRAN
-        IF (PROFILE)     OPEN (PRF,FILE=PRFFN,  &
-                               ACCESS='APPEND')                         !FORTRAN
-        IF (SPREADSHEET) OPEN (SPR,FILE=SPRFN,  &
-                               ACCESS='APPEND')                         !FORTRAN
-        IF (CONTOUR)     OPEN (CPL,FILE=CPLFN,  &
-                               ACCESS='APPEND')                         !FORTRAN
-        IF (TIME_SERIES) THEN
-          REWIND (TSR)
-          DO J=1,7
-            READ (TSR,5000,END=10000)
-          END DO
-          READ (TSR,5010) NAC,(CN(JC),JC=1,NAC)
-          READ (TSR,5020,END=10000) (CNAME1(CN(JC)),CUNIT2(CN(JC)),  &
-                                     JC=1,NAC)
-          READ (TSR,5030,END=10000)  JDAYTS
-          DO WHILE (JDAYTS.LT.JDAY)
-            READ (TSR,5030,END=10000) JDAYTS
-          END DO
-        END IF
-10000   CONTINUE
-        IF (PROFILE) THEN
-          REWIND (PRF)
-          READ (PRF,2500)  TITLE
-          READ (PRF,2510) (DUM,JC=1,NCP+1)
-          READ (PRF,2520) (DUM1,DUM1,JC=1,NCP+1)
-          READ (PRF,2530)  CONSTITUENTS,N,(N,JC=1,NAC+1)
-          READ (PRF,2540)  N,N,(N,I=1,NIPRF)
-          READ (PRF,2550) (DUMMY,I=1,KMP)
-          DO WHILE (JDAYPR.LT.JDAY)
-            DO JC=1,NAC
-              IF (CPRC(CN(JC)).EQ.' ON') THEN
-                DO JPRF=1,NIPRF
-                  READ (PRF,2560,END=10003) N,N,(DUMMY,K=1,N)
-                END DO
-              END IF
-            END DO
-            DO JPRF=1,NIPRF
-              READ (PRF,2560,END=10003) N,N,(DUMMY,K=1,N)
-            END DO
-            READ (PRF,2590,END=10003) JDAYPR
-          END DO
-          BACKSPACE (PRF)
-          DUM   = DUM//DUM1
-          DUMMY = DUMMY+N
-        END IF
-10003   CONTINUE
-        IF (SPREADSHEET) THEN
-          REWIND (SPR)
-          READ (SPR,2610) (SEGMENT(J),J=1,NISPR)
-          READ (SPR,2580,END=10005) JDAYSP
-          DO WHILE (JDAYSP.LT.JDAY)
-            READ (SPR,2580,END=10005) JDAYSP
-          END DO
-          BACKSPACE (SPR)
-        END IF
-10005   CONTINUE
-      ELSE
         IF (SNAPSHOT)    OPEN (SNP,FILE=SNPFN,STATUS='UNKNOWN' )
-!*kevin's mod:
-!        IF (SNAPSHOT)    OPEN (8,FILE='matsnp.dat',STATUS='UNKNOWN')    !8/27/98
         IF (TIME_SERIES) OPEN (TSR,FILE=TSRFN,STATUS='UNKNOWN')
         IF (VECTOR)      OPEN (VPL,FILE=VPLFN,STATUS='UNKNOWN')
         IF (PROFILE)     OPEN (PRF,FILE=PRFFN,STATUS='UNKNOWN')
         IF (SPREADSHEET) OPEN (SPR,FILE=SPRFN,STATUS='UNKNOWN')
         IF (CONTOUR)     OPEN (CPL,FILE=CPLFN,STATUS='UNKNOWN')
-      END IF
+!
       OPEN (WRN,FILE='w2.wrn',STATUS='UNKNOWN')
       OPEN (ERR,FILE='w2.err',STATUS='UNKNOWN')
 
 !**** Output files
 
       IF (SNAPSHOT) THEN
-        IF (LASERJET_II) THEN
-          WRITE (SNP,'(''+'',A80)') ESC//'E'//ESC//'(s16.66H'//ESC//  &
-                                   '(10U'//ESC//'&a8L'//ESC//'&l7E'
-        ELSE IF (LASERJET_III) THEN
-          WRITE (SNP,'(''+'',A80)') ESC//'E'//ESC//'&l6.0C'//ESC//  &
-                                   '(s0p16.67h8.5v0s0b0T'//ESC//  &
-                                   '(10U'//ESC//'&a8L'//ESC//'&l7E'
-        ELSE IF (LASERJET_IV) THEN
           WRITE (SNP,'(A80)') ESC//'E'//ESC//'&l6.0c7E'//ESC//  &
                               '(s0p16.67h8.5v0s0b0T'//ESC//'(10U'  &
                               //ESC//'&a8L'
-        END IF
       END IF
-      IF (.NOT.RESTART_IN) THEN
-        IF (PROFILE) THEN
-          WRITE (PRF,2500)  TITLE
-          WRITE (PRF,2510) (CPRC(JC),JC=1,NCP),' ON'
-          WRITE (PRF,2520) (CNAME1(JC),CUNIT2(JC),JC=1,NCP),  &
-                           'Temperature     ',CHAR(248)//'C    '
-          WRITE (PRF,2530)  CONSTITUENTS,NAC+1,(CN(JC),JC=1,NAC),22
-          WRITE (PRF,2540)  PRFDP,KT,(KB(IPRF(I)),I=1,NIPRF)
-          WRITE (PRF,2550)  H
-          DO JC=1,NAC
-            IF (CPRC(CN(JC)).EQ.' ON') THEN
-              DO JPRF=1,NIPRF
-                I   = IPRF(JPRF)
-                NRS = KB(I)-KT+1
-                WRITE (PRF,2560) CN(JC),NRS,(C2(K,I,CN(JC)),K=KT,KB(I))
-              END DO
-            END IF
-          END DO
-          DO JPRF=1,NIPRF
-            I   = IPRF(JPRF)
-            NRS = KB(I)-KT+1
-            WRITE (PRF,2560) 22,NRS,(T2(K,I),K=KT,KB(I))
-          END DO
-        END IF
-        IF (SPREADSHEET) THEN
-          DO J=1,NISPR
-            IF (ISPR(J).LT.10) THEN
-              WRITE (SEG1,'(I1)') ISPR(J)
-              SEGMENT(J) = 'Seg_'//SEG1
-            ELSE
-              WRITE (SEG2,'(I2)') ISPR(J)
-              SEGMENT(J) = 'Seg_'//SEG2
-            END IF
-          END DO
-          WRITE (SPR,2600) (SEGMENT(J),J=1,NISPR)
-        END IF
-        IF (TIME_SERIES) THEN
-          WRITE (TSR,5000)  TITLE
-          WRITE (TSR,5010)  NAC,(CN(JC),JC=1,NAC)
-          WRITE (TSR,5020) (CNAME1(CN(JC)),CUNIT2(CN(JC)),JC=1,NAC)
-        END IF
-        IF (CONTOUR) THEN
-          WRITE (CPL,5000) TITLE
-          WRITE (CPL,8000) NBP
-          WRITE (CPL,8000) IMP,KMP
-          DO JB=1,NBP
-            WRITE(CPL,8010) US(JB),DS(JB)
-            WRITE(CPL,8010) (KB(I),I=US(JB),DS(JB))
-          END DO
-          WRITE (CPL,8020) DLX
-          WRITE (CPL,8020) H
-          WRITE (CPL,8000) NAC
-          WRITE (CPL,8030) (CNAME1(CN(JC)),JC=1,NAC)
-        END IF
-        IF (VECTOR) THEN
-          WRITE (VPL,*) TITLE
-          WRITE (VPL,*) H,KB,US,DS,DLX
-        END IF
-      END IF
-
 
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
 !*                              Task 2: Calculations                        **
@@ -1882,7 +1690,6 @@ write(*,*) 'SNPFN ',SNPFN
               T2(K,ID+1) = T2(K,ID)
             END DO
           END IF
-          IF (UP_HEAD(JB)) THEN
             IUT = IU-1
             IF (UH_INTERNAL(JB)) THEN
               DO K=KT,KB(IUT)
@@ -1911,7 +1718,6 @@ write(*,*) 'SNPFN ',SNPFN
                 END IF
               END DO
             END IF
-          END IF
           IF (DN_HEAD(JB)) THEN
             IDT = ID+1
             IF (DH_INTERNAL(JB)) THEN
@@ -2157,19 +1963,6 @@ write(*,*) 'SNPFN ',SNPFN
               D(ID) = D(ID)+QOUT(K,JB)
             END DO
           END IF
-          IF (UP_HEAD(JB)) THEN
-            BHRHO(IU-1) = BHKT2(IU)/RHO(KT,IU)+BHKT2(IU-1)/RHO(KT,IU-1)
-            DO K=KT+1,KB(IU-1)
-              BHRHO(IU-1) = BHRHO(IU-1)+(BH(K,IU)/RHO(K,IU)+BH(K,IU-1)  &
-                            /RHO(K,IU-1))
-            END DO
-            D(IU)   = D(IU)-U(KT,IU-1)*BHRKT2(IU-1)
-            F(IU-1) = -SB(KT,IU-1)+ST(KT,IU-1)-HDG(KT,IU-1)
-            DO K=KT+1,KB(IU)
-              D(IU)   = D(IU)-U(K,IU-1)*BHR(K,IU-1)
-              F(IU-1) = F(IU-1)-(SB(K,IU-1)-ST(K,IU-1)+HDG(K,IU-1))
-            END DO
-          END IF
           IF (DN_HEAD(JB)) THEN
             BHRHO(ID) = BHKT2(ID+1)/RHO(KT,ID+1)+BHKT2(ID)/RHO(KT,ID)
             DO K=KT+1,KB(ID+1)
@@ -2206,7 +1999,6 @@ write(*,*) 'SNPFN ',SNPFN
                    +BHRHO(I-1)*0.5/DLXR(I-1))+DLX(I)*B(KTI(I),I)
             D(I) = DLT*(D(I)+DLT*(F(I)-F(I-1)))+DLX(I)*B(KTI(I),I)*Z(I)
           END DO
-          IF (UP_HEAD(JB)) D(IU) = D(IU)-A(IU)*Z(IU-1)
           IF (DN_HEAD(JB)) D(ID) = D(ID)-C(ID)*Z(ID+1)
 
 !******** Implicit water surface elevation
@@ -2275,7 +2067,6 @@ write(*,*) 'SNPFN ',SNPFN
 
           IUT = IU
           IDT = ID
-          IF (UP_HEAD(JB)) IUT = IU-1
           IF (DN_HEAD(JB)) IDT = ID+1
 
 !******** Pressures
@@ -2370,14 +2161,6 @@ write(*,*) 'SNPFN ',SNPFN
               U(K,ID) = QOUT(K,JB)/BHRT
             END DO
           END IF
-          IF (UP_HEAD(JB)) THEN
-            U(KT,IU-1) = (BHRKT2(IU-1)*U(KT,IU-1)+DLT*(-SB(KT,IU-1)  &
-                         +ST(KT,IU-1)-HPG(KT,IU-1)))/BHRKT1(IU-1)
-            DO K=KT+1,KB(IU-1)
-              U(K,IU-1) = (BHR(K,IU-1)*U(K,IU-1)+DLT*(-SB(K,IU-1)  &
-                          +ST(K,IU-1)-HPG(K,IU-1)))/BHR(K,IU-1)
-            END DO
-          END IF
           IF (DN_HEAD(JB)) THEN
             U(KT,ID) = (BHRKT2(ID)*U(KT,ID)+DLT*(-SB(KT,ID)+ST(KT,ID)  &
                        -HPG(KT,ID)))/BHRKT1(ID)
@@ -2401,15 +2184,6 @@ write(*,*) 'SNPFN ',SNPFN
 
 !******** Corrected horizontal velocities
 
-          IF (UP_HEAD(JB)) THEN
-            IS   = ID
-            IE   = IU-1
-            INCR = -1
-            Q(IS) = U(KT,IS)*BHRKT1(IS)
-            DO K=KT+1,KB(ID)
-              Q(IS) = Q(IS)+U(K,IS)*BHR(K,IS)
-            END DO
-          ELSE
             IS   = IU-1
             IE   = ID
             INCR = 1
@@ -2418,7 +2192,6 @@ write(*,*) 'SNPFN ',SNPFN
             DO K=KT+1,KB(IU)
               Q(IS) = Q(IS)+U(K,IS)*BHR(K,IS)
             END DO
-          END IF
           QC(IS) = Q(IS)
           DO I=IS+INCR,IE,INCR
             QSSUM(I) = QSS(KT,I)
@@ -2431,12 +2204,12 @@ write(*,*) 'SNPFN ',SNPFN
               BHRSUM = BHRSUM+BHR(K,I)
               Q(I)   = Q(I)+U(K,I)*BHR(K,I)
             END DO
-            IF (UP_HEAD(JB)) THEN
-              QC(I) = QC(I+1)+(BHKT1(I+1)-BHKT2(I+1))*DLX(I+1)/DLT  &
-                      -QSSUM(I+1)
-            ELSE
+!            IF (UP_HEAD(JB)) THEN
+!              QC(I) = QC(I+1)+(BHKT1(I+1)-BHKT2(I+1))*DLX(I+1)/DLT  &
+!                      -QSSUM(I+1)
+!            ELSE
               QC(I) = QC(I-1)-(BHKT1(I)-BHKT2(I))*DLX(I)/DLT+QSSUM(I)
-            END IF
+!            END IF
             DO K=KT,KBMIN(I)
               U(K,I) = U(K,I)+(QC(I)-Q(I))/BHRSUM
             END DO
@@ -2444,12 +2217,6 @@ write(*,*) 'SNPFN ',SNPFN
 
 !******** Head boundary flows
 
-          IF (UP_HEAD(JB)) THEN
-            QUH1(KT,JB) = U(KT,IU-1)*BHRKT1(IU-1)
-            DO K=KT+1,KB(IU-1)
-              QUH1(K,JB) = U(K,IU-1)*BHR(K,IU-1)
-            END DO
-          END IF
           IF (DN_HEAD(JB)) THEN
             QDH1(KT,JB) = U(KT,ID)*BHRKT1(ID)
             DO K=KT+1,KB(ID+1)
@@ -2820,22 +2587,6 @@ write(*,*) 'SNPFN ',SNPFN
               VOLOUT(JB) = VOLOUT(JB)-QOUT(K,JB)*DLT
             END DO
           END IF
-          IF (UP_HEAD(JB)) THEN
-            IUT = IU
-            IF (QUH1(KT,JB).GE.0.0) IUT = IU-1
-            TSSUH1(KT,JB) = T2(KT,IUT)*QUH1(KT,JB)
-            TSS(KT,IU)    = TSS(KT,IU)+TSSUH1(KT,JB)
-            TSSUH(JB)     = TSSUH(JB)+TSSUH1(KT,JB)*DLT
-            VOLUH(JB)     = VOLUH(JB)+QUH1(KT,JB)*DLT
-            DO K=KT+1,KB(IU)
-              IUT = IU
-              IF (QUH1(K,JB).GE.0.0) IUT = IU-1
-              TSSUH1(K,JB) = T2(K,IUT)*QUH1(K,JB)
-              TSS(K,IU)    = TSS(K,IU)+TSSUH1(K,JB)
-              TSSUH(JB)    = TSSUH(JB)+TSSUH1(K,JB)*DLT
-              VOLUH(JB)    = VOLUH(JB)+QUH1(K,JB)*DLT
-            END DO
-          END IF
           IF (UH_INTERNAL(JB)) THEN
             DO K=KT,KB(IU-1)
               TSS(K,UHS(JB))  = TSS(K,UHS(JB))-TSSUH2(K,JB)/DLT
@@ -3183,24 +2934,6 @@ write(*,*) 'SNPFN ',SNPFN
                                   *C1S(K,ID,JC)
                 END DO
               END IF
-              IF (UP_HEAD(JB)) THEN
-                IUT = IU
-                IF (QUH1(KT,JB).GE.0.0) IUT = IU-1
-                CSSUH1(KT,JC,JB) = C1S(KT,IUT,JC)*QUH1(KT,JB)
-                CSSB(KT,IU,JC)   = CSSB(KT,IU,JC)+CSSUH1(KT,JC,JB)
-                DO K=KT+1,KB(IU)
-                  IUT = IU
-                  IF (QUH1(K,JB).GE.0.0) IUT = IU-1
-                  CSSUH1(K,JC,JB) = C1S(K,IUT,JC)*QUH1(K,JB)
-                  CSSB(K,IU,JC)   = CSSB(K,IU,JC)+CSSUH1(K,JC,JB)
-                END DO
-                IF (UH_INTERNAL(JB)) THEN
-                  I = UHS(JB)
-                  DO K=KT,KB(IU)
-                    CSSB(K,I,JC) = CSSB(K,I,JC)-CSSUH2(K,JC,JB)/DLT
-                  END DO
-                END IF
-              END IF
               IF (DN_HEAD(JB)) THEN
                 IDT = ID+1
                 IF (QDH1(KT,JB).GE.0.0) IDT = ID
@@ -3371,19 +3104,6 @@ write(*,*) 'SNPFN ',SNPFN
             DO I=IU-1,ID
               BHRKT1(I) = (BHKT1(I)+BHKT1(I+1))*0.5
             END DO
-            IF (UP_HEAD(JB)) THEN
-              BHSUM           = BHRKT1(IU-1)+BHR(KT+1,IU-1)
-              QUH1(KT,JB)     = QUH1(KT+1,JB)*BHRKT1(IU-1)/BHSUM
-              QUH1(KT+1,JB)   = QUH1(KT+1,JB)*BHR(KT+1,IU-1)/BHSUM
-              TSSUH1(KT,JB)   = TSSUH1(KT+1,JB)*BHRKT1(IU-1)/BHSUM
-              TSSUH1(KT+1,JB) = TSSUH1(KT+1,JB)*BHR(KT+1,IU-1)/BHSUM
-              DO JC=1,NAC
-                CSSUH1(KT,CN(JC),JB)   = CSSUH1(KT+1,CN(JC),JB)  &
-                                         *BHRKT1(IU-1)/BHSUM
-                CSSUH1(KT+1,CN(JC),JB) = CSSUH1(KT+1,CN(JC),JB)  &
-                                         *BHR(KT+1,IU-1)/BHSUM
-              END DO
-            END IF
             IF (DN_HEAD(JB)) THEN
               BHSUM           = BHRKT1(ID)+BHR(KT+1,ID)
               QDH1(KT,JB)     = QDH1(KT+1,JB)*BHRKT1(ID)/BHSUM
@@ -3402,7 +3122,6 @@ write(*,*) 'SNPFN ',SNPFN
             END DO
             IUT = IU
             IDT = ID-1
-            IF (UP_HEAD(JB)) IUT = IU-1
             IF (DN_HEAD(JB)) IDT = ID
             DO I=IUT,IDT
               AZ(KT,I)  = AZMIN
@@ -3473,12 +3192,6 @@ write(*,*) 'SNPFN ',SNPFN
               CUS(JB) = IU
               IF (UH_EXTERNAL(JB)) KB(IU-1) = KB(IU)
               IF (UH_INTERNAL(JB)) KB(IU-1) = MIN(KB(UHS(JB)),KB(IU))
-              IF (UP_HEAD(JB)) THEN
-                DO K=KT,KB(IU-1)-1
-                  AZ(KT,IU-1)  = AZMIN
-                  SAZ(KT,IU-1) = AZMIN
-                END DO
-              END IF
             END IF
 
 !****!***** Total active cells and single layers
@@ -3536,14 +3249,6 @@ write(*,*) 'SNPFN ',SNPFN
             DO I=IU-1,ID
               BHRKT1(I) = (BHKT1(I)+BHKT1(I+1))*0.5
             END DO
-            IF (UP_HEAD(JB)) THEN
-              QUH1(KT,JB)   = QUH1(KT,JB)+QUH1(KT-1,JB)
-              TSSUH1(KT,JB) = TSSUH1(KT-1,JB)+TSSUH1(KT,JB)
-              DO JC=1,NAC
-                CSSUH1(KT,CN(JC),JB) = CSSUH1(KT-1,CN(JC),JB)  &
-                                       +CSSUH1(KT,CN(JC),JB)
-              END DO
-            END IF
             IF (DN_HEAD(JB)) THEN
               QDH1(KT,JB)   = QDH1(KT,JB)+QDH1(KT-1,JB)
               TSSDH1(KT,JB) = TSSDH1(KT-1,JB)+TSSDH1(KT,JB)
@@ -4149,56 +3854,6 @@ write(*,*) 'SNPFN ',SNPFN
           END IF
         END IF
 
-!****** Restart
-
-        IF (RESTART_OUT) THEN
-          IF (JDAY.GE.NXTMRS.OR.JDAY.GE.RSOD(RSODP+1)) THEN
-            IF (JDAY.GE.RSOD(RSODP+1)) THEN
-              RSODP  = RSODP+1
-              NXTMRS = RSOD(RSODP)
-            END IF
-            NXTMRS = NXTMRS+RSOF(RSODP)
-            IDAY   = INT(JDAY)
-            IF (IDAY.LT.10) THEN
-              WRITE (EXT1,'(I1)') IDAY
-              RSOFN = 'rso'//EXT1//'.opt'
-            ELSE IF (IDAY.LT.100) THEN
-              WRITE (EXT2,'(I2)') IDAY
-              RSOFN = 'rso'//EXT2//'.opt'
-            ELSE IF (IDAY.LT.1000) THEN
-              WRITE (EXT3,'(I3)') IDAY
-              RSOFN = 'rso'//EXT3//'.opt'
-            ELSE IF (IDAY.LT.10000) THEN
-              WRITE (EXT4,'(I4)') IDAY
-              RSOFN = 'rso'//EXT4//'.opt'
-            ELSE
-              WRITE (EXT5,'(I5)') IDAY
-              RSOFN = 'rso'//EXT5//'.opt'
-            END IF
-            OPEN  (RSO,FILE=RSOFN,STATUS='UNKNOWN')
-            WRITE (RSO,*) KT,     NIT,    NV,     KMIN,   IMIN
-            WRITE (RSO,*) DLTDP,  SNPDP,  TSRDP,  VPLDP,  PRFDP,    &
-                          CPLDP,  SPRDP,  RSODP,  WSCDP,  SCRDP
-            WRITE (RSO,*) JDAY,   JDAYG,  YEAR,   ELTM,   DLT,  &
-                          DLTAV,  MINDLT, JDMIN,  CURMAX
-            WRITE (RSO,*) NXTMSN, NXTMTS, NXTMPR, NXTMCP, NXTMVP,  &
-                          NXTMRS, NXTMSC, NXTMSP
-            WRITE (RSO,*) VOLIN,  VOLOUT, VOLUH,  VOLDH,  VOLPR,  &
-                          VOLTR,  VOLDT,  VOLWD,  VOLEV,  VOLSBR,  &
-                          CMBRT
-            WRITE (RSO,*) TSSEV,  TSSPR,  TSSTR,  TSSDT,  TSSWD,  &
-                          TSSUH,  TSSDH,  TSSIN,  TSSOUT, TSSS,  &
-                          TSSB,   TSSICE, ESBR,   ETBR,   EIBR
-            WRITE (RSO,*) TSSUH2, TSSDH2, CSSUH2, CSSDH2, QUH2,  &
-                          QDH2
-            WRITE (RSO,*) Z,      SZ,     ELWS
-            WRITE (RSO,*) KT,     KTI,    SKTI
-            WRITE (RSO,*) ICE,    ICETH
-            WRITE (RSO,*) U,      W,      SU,     SW,     AZ,  &
-                          T1,     T2,     C1,     C2
-            CLOSE (RSO)
-          END IF
-        END IF
 
 !****** Screen output
 
