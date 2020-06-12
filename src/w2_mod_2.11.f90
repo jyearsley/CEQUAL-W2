@@ -1427,7 +1427,8 @@ write(*,*) 'SNPFN ',SNPFN
         DO I=IU,ID
           DO K=KT,KB(I)
             IF (CONSTITUENTS) THEN
-              RHO(K,I) = DENSITY (T2(K,I),SS(K,I),TDS(K,I))
+!              RHO(K,I) = DENSITY (T2(K,I),SS(K,I),TDS(K,I))
+              RHO(K,I) = 999.999             
             ELSE
               RHO(K,I) = DENSITY (T2(K,I),0.0,0.0)
             END IF
@@ -1497,6 +1498,7 @@ write(*,*) 'SNPFN ',SNPFN
       DO WHILE (.NOT.END_RUN)
         IF (JDAY.GE.NXTVD)  CALL TIME_VARYING_DATA  (JDAY,NXTVD)
         IF (INTERPOLATE)    CALL INTERPOLATE_INPUTS (JDAY)
+
         DLTTVDS = DLTTVD
         DLTTVD  = INT((NXTVD-JDAY)*86400.0)+1.0
 
@@ -1698,16 +1700,12 @@ write(*,*) 'SNPFN ',SNPFN
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
 !*                          Task 2.2.2: Momentum Terms                      **
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
-
+!
 !******** Densities
 
           DO I=IU,ID
             DO K=KT,KB(I)
-              IF (CONSTITUENTS) THEN
-                RHO(K,I) = DENSITY (T2(K,I),SS(K,I),TDS(K,I))
-              ELSE
                 RHO(K,I) = DENSITY (T2(K,I),0.0,0.0)
-              END IF
             END DO
           END DO
 
@@ -1789,7 +1787,7 @@ write(*,*) 'SNPFN ',SNPFN
               SB(KBT,I) = SSCCOS*EXPDF*(BR(KBT-1,I)+BR(KBT,I))*0.5
             END IF
           END DO
-
+!
 !******** Average eddy diffusivities
 
           DO K=KT,KB(IDT)-1
@@ -1871,7 +1869,7 @@ write(*,*) 'SNPFN ',SNPFN
                           *0.5*(UD*U(K,I)+(1.0-UD)*U(K+1,I))
             END DO
           END DO
-
+!
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
 !*                      Task 2.2.3: Water Surface Elevation                 **
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
@@ -1988,7 +1986,7 @@ write(*,*) 'SNPFN ',SNPFN
             DEPTHB(K) = DEPTHB(K-1)+H(K)
             DEPTHM(K) = DEPTHM(K-1)+(H(K-1)+H(K))*0.5
           END DO
-
+!
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
 !*                      Task 2.2.4: Longitudinal Velocities                 **
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
@@ -2033,7 +2031,7 @@ write(*,*) 'SNPFN ',SNPFN
               END DO
               KTQIN(JB) = K
               KBQIN(JB) = K
-
+!
 !****!******* Layer inflows
 
               VQIN  = QIN(JB)*DLT
@@ -2088,7 +2086,7 @@ write(*,*) 'SNPFN ',SNPFN
               U(K,ID) = QOUT(K,JB)/BHRT
             END DO
           END IF
-
+!
 !******** Horizontal velocities
 
           DO I=IU,ID-1
@@ -2149,6 +2147,7 @@ write(*,*) 'SNPFN ',SNPFN
           END DO
         END DO
 
+
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
 !*                           Task 2.2.6: Autostepping                       **
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
@@ -2194,7 +2193,7 @@ write(*,*) 'SNPFN ',SNPFN
             END DO
           END DO
         END DO
-              
+!
 !****** Limiting location
 
         IF (LIMITING_DLT) THEN
@@ -2239,7 +2238,7 @@ write(*,*) 'SNPFN ',SNPFN
           NV = NV+1
           GO TO 10010
         END IF
-
+!
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
 !*               Task 2.3: Temporal Balance Terms and Temperatures          **
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
@@ -2276,23 +2275,23 @@ write(*,*) 'SNPFN ',SNPFN
 
 !****!****!**** Solar radiation
 
-                IF (CONSTITUENTS) THEN
-                  GAMMA = EXH2O+EXSS*SS(KT,I)+EXOM*(ALGAE(KT,I)  &
-                          +LPOM(KT,I))
-                ELSE
+!                IF (CONSTITUENTS) THEN
+!                  GAMMA = EXH2O+EXSS*SS(KT,I)+EXOM*(ALGAE(KT,I)  &
+!                          +LPOM(KT,I))
+!                ELSE
                   GAMMA = EXH2O
-                END IF
+!                END IF
                 TFLUX     = (1.0-BETA)*SRON*EXP(-GAMMA*DEPTHB(KT))  &
                             *B(KTI(I),I)*DLX(I)
                 TSS(KT,I) = TSS(KT,I)-TFLUX
                 TSSS(JB)  = TSSS(JB)-TFLUX*DLT
                 DO K=KT+1,KB(I)
-                  IF (CONSTITUENTS) THEN
-                    GAMMA = EXH2O+EXSS*SS(K,I)+EXOM*(ALGAE(K,I)  &
-                            +LPOM(K,I))
-                  ELSE
+!                  IF (CONSTITUENTS) THEN
+!                    GAMMA = EXH2O+EXSS*SS(K,I)+EXOM*(ALGAE(K,I)  &
+!                            +LPOM(K,I))
+!                  ELSE
                     GAMMA = EXH2O
-                  END IF
+!                  END IF
                   TFLUX    = (1.0-BETA)*SRON*(EXP(-GAMMA*DEPTHB(K))  &
                              -EXP(-GAMMA*DEPTHB(K+1)))*B(K,I)*DLX(I)
                   TSS(K,I) = TSS(K,I)+TFLUX
@@ -2637,7 +2636,7 @@ write(*,*) 'SNPFN ',SNPFN
             END DO
           END DO
         END DO
-
+!
 !****** Heat transport
 
         DO JB=1,NBP
@@ -2772,6 +2771,7 @@ write(*,*) 'SNPFN ',SNPFN
                         CSSB(K,I,JC) = CSSB(K,I,JC)+C1(K,I,JC)*QTR(JT)  &
                                        *QTRF(K,JT)
                       ELSE
+
                         CSSB(K,I,JC) = CSSB(K,I,JC)+CTR(JC,JT)*QTR(JT)  &
                                        *QTRF(K,JT)
                       END IF
@@ -2817,10 +2817,12 @@ write(*,*) 'SNPFN ',SNPFN
               JC = CN(JAC)
               IF (TRANSPORT(JC)) THEN
 
+
 !****!****!**** Horizontal advection and diffusion terms
 
                 DO I=IU,ID-1
                   DO K=KT,KB(I)
+!if(JC.eq.3)write(*,*) 'Transport 5 ',jac,JC,c1(k,i,jc)
                     IF (U(K,I).GE.0.0) THEN
                       C1L = C1S(K,I-1,JC)
                       C2L = C1S(K,I,JC)
@@ -2872,6 +2874,7 @@ write(*,*) 'SNPFN ',SNPFN
               JC = CN(JAC)
               IF (TRANSPORT(JC)) THEN
                 DO I=IU,ID
+!write(*,*) 'transport ',kt,i,jc,c1(kt,i,jc)
                   C1(KT,I,JC) = ((C1S(KT,I,JC)*BHKT2(I)/DLT  &
                                 +(CADL(KT,I,JC)*BHRKT1(I)  &
                                 -CADL(KT,I-1,JC)*BHRKT1(I-1))/DLX(I)  &
@@ -2909,7 +2912,7 @@ write(*,*) 'SNPFN ',SNPFN
             END DO
           END DO
         END IF
-
+!
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
 !*              Task 2.5: Layer - Segment Additions and Subtractions        **
 !****!****!****!****!****!****!****!****!****!****!****!****!****!******
@@ -2926,9 +2929,9 @@ write(*,*) 'SNPFN ',SNPFN
         SUB_LAYER = ZMIN.GT.0.60*H(KT)
 
 !****** Add layers
-
         DO WHILE (ADD_LAYER)
           IF (SNAPSHOT) WRITE (SNP,4000) KT-1,JDAY
+write(*,*) 'add layers ',kt-1,jday
 
 !******** Variable initialization
 
@@ -2949,7 +2952,8 @@ write(*,*) 'SNPFN ',SNPFN
                 CSSK(KT,I,CN(JC)) = CSSK(KT+1,I,CN(JC))
               END DO
               IF (CONSTITUENTS) THEN
-                RHO(KT,I) = DENSITY (T2(KT,I),SS(KT,I),TDS(KT,I))
+!                RHO(KT,I) = DENSITY (T2(KT,I),SS(KT,I),TDS(KT,I))
+                RHO(KT,I) = 999.999
               ELSE
                 RHO(KT,I) = DENSITY (T2(KT,I),0.0,0.0)
               END IF
@@ -3075,6 +3079,7 @@ write(*,*) 'SNPFN ',SNPFN
                          +T1(KT,I)*BH(KT,I))/BHKT1(I)
               DO JC=1,NAC
                 JAC              = CN(JC)
+write(*,*) JC,JAC,C1(KT,I,JAC)
                 C1(KT,I,JAC)     = (C1(KT-1,I,JAC)*(BHKT1(I)-BH(KT,I))  &
                                    +C1(KT,I,JAC)*BH(KT,I))/BHKT1(I)
                 CSSB(KT,I,JAC)   = CSSB(KT-1,I,JAC)+CSSB(KT,I,JAC)
@@ -3088,7 +3093,7 @@ write(*,*) 'SNPFN ',SNPFN
               BHRKT1(I) = (BHKT1(I)+BHKT1(I+1))*0.5
             END DO
 !****!***** Upstream active segment
-
+write(*,*) 'active segment'
             IUT = US(JB)
             DO I=US(JB),DS(JB)
               IF (KB(I)-KT.LT.NL(JB)-1) IUT = I+1
@@ -3160,7 +3165,7 @@ write(*,*) 'SNPFN ',SNPFN
             END IF
 
 !****!***** Total active cells
-
+write(*,*) 'Checkpoint 3.19 active cells'
             DO I=IU,ID
               NTAC = NTAC-1
             END DO
@@ -3217,6 +3222,7 @@ write(*,*) 'SNPFN ',SNPFN
           DO JB=1,NBP
             DO JC=1,NAC
               JAC = CN(JC)
+write(*,*) 'Checkpoint 3.19 Mass balance'
               IF (TRANSPORT(JAC)) THEN
                 CMBRS(JAC,JB) = 0.0
                 DO I=CUS(JB),DS(JB)
@@ -4381,7 +4387,8 @@ write(*,*) 'SNPFN ',SNPFN
                     CTR(TRCN(JC),JT)  = CTRNX(TRCN(JC),JT)
                     CTRO(TRCN(JC),JT) = CTRNX(TRCN(JC),JT)
                   END DO
-                  READ (TRC(JT),1030) NXCTR1(JT),(CTRNX(TRCN(JC),JT),  &
+!                  READ (TRC(JT),1030) NXCTR1(JT),(CTRNX(TRCN(JC),JT),  &
+                  READ (TRC(JT),*) NXCTR1(JT),(CTRNX(TRCN(JC),JT),  &
                                       JC=1,NACTR)
                 END DO
               END IF
@@ -4429,7 +4436,8 @@ write(*,*) 'SNPFN ',SNPFN
                     CIN(INCN(JC),JB)  = CINNX(INCN(JC),JB)
                     CINO(INCN(JC),JB) = CINNX(INCN(JC),JB)
                   END DO
-                  READ (INC(JB),1030) NXCIN1(JB),(CINNX(INCN(JC),JB),  &
+!                  READ (INC(JB),1030) NXCIN1(JB),(CINNX(INCN(JC),JB),  &
+                  READ (INC(JB),*) NXCIN1(JB),(CINNX(INCN(JC),JB),  &
                                       JC=1,NACIN)
                 END DO
               END IF
@@ -4462,7 +4470,6 @@ write(*,*) 'SNPFN ',SNPFN
             END IF
             NXTVD = MIN(NXTVD,NXQOT1(JB))
           END IF
-
 !******** Distributed tributaries
 
 
@@ -4610,7 +4617,7 @@ write(*,*) 'SNPFN ',SNPFN
             END DO
           END IF
         END IF
-
+!
 !****** Branch related inputs
 
         DO JB=1,NBP
@@ -4633,6 +4640,7 @@ write(*,*) 'SNPFN ',SNPFN
             END IF
           END IF
 
+!
 !******** Outflow
 
           IF (DN_FLOW(JB)) THEN
@@ -4692,7 +4700,7 @@ write(*,*) 'SNPFN ',SNPFN
         DATA SBC /2.0411E-7/
 
 !****** Month
-
+!
         IF (MONTH.EQ.'  January') M = 1
         IF (MONTH.EQ.' February') M = 2
         IF (MONTH.EQ.'    March') M = 3

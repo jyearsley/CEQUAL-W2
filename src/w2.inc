@@ -53,7 +53,7 @@
 
       CHARACTER  CONFN*72
       PARAMETER (CONFN='w2_con.npt')
-      PARAMETER (IMP=28,KMP=41,IMC=1,KMC=1,NBP=1,NSP=2,NTP=1,NWP=1,      &
+      PARAMETER (IMP=28,KMP=41,IMC=28,KMC=41,NBP=1,NSP=2,NTP=1,NWP=1,      &
                  NDP=50)
       PARAMETER (NCP=21)
 !
