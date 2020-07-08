@@ -66,29 +66,6 @@
                      ' Vertical_velocity, mm/s',  &
                      '   Temperature, øC   ',  &
                      '   Limiting timestep    '/
-        DATA CNAME2 /'    Tracer, g/m^3      ',      &                     !1
-                     'Suspended solids, g/m^3',      &                     !2
-                     '    Coliform, g/m^3    ',      &                     !3
-                     'Dissolved solids, g/m^3',      &                     !4
-                     '   Labile DOM, g/m^3   ',      &                     !5
-                     ' Refractory DOM, g/m^3 ',      &                     !6
-                     '      Algae, g/m^3     ',      &                     !7
-                     '   Labile POM, g/m^3   ',      &                     !8
-                     '   Phosphorus, mg/m^3  ',      &                  !9
-                     '    Ammonium, mg/m^3   ',  &                         !10
-                     'Nitrate-Nitrite, mg/m^3',  &                         !11
-                     'Dissolved oxygen, g/m^3',    &                       !12
-                     '    Sediment, g/m^3    ',    &                       !13
-                     'Inorganic carbon, g/m^3',    &                       !14
-                     '   Alkalinity, g/m^3   ',    &                       !15
-                     '           pH          ',    &                       !16
-                     ' Carbon dioxide, g/m^3 ',    &                       !17
-                     '   Bicarbonate, g/m^3  ',    &                       !18
-                     '    Carbonate, g/m^3   ',    &                       !19
-                     '      Iron, g/m^3      ',    &                       !20
-                     '      CBOD, g/m^3      '/                         !21
-        DATA CUNIT1 /8*'g/m^3', 3*'mg/m^3', 4*'g/m^3', ' ',  &
-                     3*'g/m^3',   'mg/m^3',   'g/m^3'/ 
         DATA SNP   /20/, NONZERO /1.0E-20/
       END
 
@@ -406,21 +383,6 @@
       COMMON /NONZC/  NONZERO
       COMMON /ELBALC/ NXELV1, NXELV2, ELWSO1, ELWSO2
 
-!**** Data statements
-
-      DATA CNAME1 /'Tracer',          'Suspended_solids',                &
-                   'Coliform',        'Dissolved_solids',                &
-                   'Labile_DOM',      'Refractory_DOM',                  &
-                   'Algae',           'Labile POM',                      &
-                   'Phosphorus',      'Ammonium',                        &
-                   'Nitrate-nitrite', 'Dissolved_oxygen',                &
-                   'Sediment',        'Inorganic_carbon',                &
-                   'Alkalinity',      'pH',                              &
-                   'Carbon_dioxide',  'Bicarbonate',                     &
-                   'Carbonate',       'Iron',                            &
-                   'CBOD'/
-      DATA CUNIT2 /21*'g/m 3'/
-      DATA CUNIT3 /21*'g '/
       DATA RHOA   /1.25/,   RHOW  /1000.0/,   RHOI    /916.0/,           &
            RK1    /2.12/,   RL1   /333507.0/, RIMT    /0.0/
       DATA G      /9.8/,    VTOL  /1.0E3/,    CP      /4186.0/,          &
@@ -545,40 +507,40 @@
 
 !**** Constituent control cards
 
-      READ (CON,1170)  CCC, LIMC, SDC, FREQUK
-      READ (CON,1060) (ACC(JC),  JC=1,NCP)
-      READ (CON,1030) (C2I(JC),  JC=1,NCP)
-      READ (CON,1060) (CPRC(JC), JC=1,NCP)
-      READ (CON,1060) (INACC(JC),JC=1,NCP)
-      READ (CON,1060) (TRACC(JC),JC=1,NCP)
-      READ (CON,1060) (DTACC(JC),JC=1,NCP)
-      READ (CON,1060) (PRACC(JC),JC=1,NCP)
+!      READ (CON,1170)  CCC, LIMC, SDC, FREQUK
+!      READ (CON,1060) (ACC(JC),  JC=1,NCP)
+!      READ (CON,1030) (C2I(JC),  JC=1,NCP)
+!      READ (CON,1060) (CPRC(JC), JC=1,NCP)
+!      READ (CON,1060) (INACC(JC),JC=1,NCP)
+!      READ (CON,1060) (TRACC(JC),JC=1,NCP)
+!      READ (CON,1060) (DTACC(JC),JC=1,NCP)
+!      READ (CON,1060) (PRACC(JC),JC=1,NCP)
 
 !**** Kinetics coefficients
 
       READ (CON,1030)  EXH2O,  EXSS,   EXOM,   BETA
-      READ (CON,1030)  COLQ10, COLDK
-      READ (CON,1030)  SSS
-      READ (CON,1030)  AG,     AM,     AE,     AR,     AS,    ASAT,  &
-                       APOM
-      READ (CON,1030)  AT1,    AT2,    AT3,    AT4,    AK1,   AK2,  &
-                       AK3,    AK4
-      READ (CON,1030)  LDOMDK, LRDDK,  RDOMDK
-      READ (CON,1030)  LPOMDK, POMS
-      READ (CON,1030)  OMT1,   OMT2,   OMK1,   OMK2
-      READ (CON,1030)  SDK,    FSOD
-      READ (CON,1030) (SOD(I),I=1,IMP)
-      READ (CON,1030)  KBOD,   TBOD,   RBOD
-      READ (CON,1030)  PO4R,   PARTP,  AHSP
-      READ (CON,1030)  NH4R,   NH4DK,  AHSN
-      READ (CON,1030)  NH4T1,  NH4T2,  NH4K1,  NH4K2
-      READ (CON,1030)  NO3DK
-      READ (CON,1030)  NO3T1,  NO3T2,  NO3K1,  NO3K2
-      READ (CON,1030)  CO2R
-      READ (CON,1030)  FER,    FES
-      READ (CON,1030)  O2NH4,  O2OM,   O2AR,   O2AG,  BIOP,  BION,  &
-                       BIOC
-      READ (CON,1030)  O2LIM
+!      READ (CON,1030)  COLQ10, COLDK
+!      READ (CON,1030)  SSS
+!      READ (CON,1030)  AG,     AM,     AE,     AR,     AS,    ASAT,  &
+!                       APOM
+!      READ (CON,1030)  AT1,    AT2,    AT3,    AT4,    AK1,   AK2,  &
+!                       AK3,    AK4
+!      READ (CON,1030)  LDOMDK, LRDDK,  RDOMDK
+!      READ (CON,1030)  LPOMDK, POMS
+!      READ (CON,1030)  OMT1,   OMT2,   OMK1,   OMK2
+!      READ (CON,1030)  SDK,    FSOD
+!      READ (CON,1030) (SOD(I),I=1,IMP)
+!      READ (CON,1030)  KBOD,   TBOD,   RBOD
+!      READ (CON,1030)  PO4R,   PARTP,  AHSP
+!      READ (CON,1030)  NH4R,   NH4DK,  AHSN
+!      READ (CON,1030)  NH4T1,  NH4T2,  NH4K1,  NH4K2
+!      READ (CON,1030)  NO3DK
+!      READ (CON,1030)  NO3T1,  NO3T2,  NO3K1,  NO3K2
+!      READ (CON,1030)  CO2R
+!      READ (CON,1030)  FER,    FES
+!      READ (CON,1030)  O2NH4,  O2OM,   O2AR,   O2AG,  BIOP,  BION,  &
+!                       BIOC
+!      READ (CON,1030)  O2LIM
 
 !**** Input filenames
 
@@ -722,14 +684,6 @@ write(*,*) 'SNPFN ',SNPFN
         DO K=1,KMP
           TSS(K,I) = 0.0
           QSS(K,I) = 0.0
-          IF (CONSTITUENTS) THEN
-            DO JC=1,NCP
-!             IF (.NOT.RESTART_IN) THEN
-                CSSB(K,I,JC) = 0.0
-                CSSK(K,I,JC) = 0.0
-!             END IF
-            END DO
-          END IF
         END DO
       END DO
       DO JB=1,NBP
@@ -965,41 +919,7 @@ write(*,*) 'SNPFN ',SNPFN
       NXTVD  = JDAY
       NXELV2 = TMSTRT
       CURMAX = DLTMAX(DLTDP)/DLTF(DLTDP)
-
-!**** Active constituents
-
-      IF (CONSTITUENTS) THEN
-        DO JC=1,NCP
-          IF (ACC(JC).EQ.' ON') THEN
-            NAC     = NAC+1
-            CN(NAC) = JC
-          END IF
-          IF (INACC(JC).EQ.' ON') THEN
-            NACIN       = NACIN+1
-            INCN(NACIN) = JC
-          END IF
-          IF (TRACC(JC).EQ.' ON') THEN
-            NACTR       = NACTR+1
-            TRCN(NACTR) = JC
-          END IF
-          IF (DTACC(JC).EQ.' ON') THEN
-            NACDT       = NACDT+1
-            DTCN(NACDT) = JC
-          END IF
-          IF (PRACC(JC).EQ.' ON') THEN
-            NACPR       = NACPR+1
-            PRCN(NACPR) = JC
-          END IF
-        END DO
-      END IF
-      IF (CONSTITUENTS) THEN
-        DO JC=1,NCP
-          IF (ACC(JC).EQ.' ON') THEN
-            NAC0      = NAC0+1
-            CN0(NAC0) = JC
-          END IF
-        END DO
-      END IF
+!
       DEG = CHAR(248)//'C'
       ESC = CHAR(027)
       CALL DATE_TIME (CDATE,CTIME)
@@ -1360,23 +1280,7 @@ write(*,*) 'SNPFN ',SNPFN
               T2(K,I) = T1(K,I)
             END DO
           END DO
-
-!******** Constituents
-
-          DO JC=1,NAC0
-            DO I=IU,ID
-              IF (LONG_CONC(CN0(JC))) THEN
-                READ (LPR,1190) (C2(K,I,CN0(JC)),K=KT,KB(I))
-              END IF
-              DO K=KT,KB(I)
-                IF (ISO_CONC(CN0(JC)))  C2(K,I,CN0(JC)) = C2I(CN0(JC))
-                IF (VERT_CONC(CN0(JC))) C2(K,I,CN0(JC)) = CVP(K,CN0(JC))
-                C1(K,I,CN0(JC))  = C2(K,I,CN0(JC))
-                C1S(K,I,CN0(JC)) = C1(K,I,CN0(JC))
-              END DO
-            END DO
-          END DO
-
+!
 !******** Energy
 
           IF (ENERGY_BALANCE) THEN
@@ -1387,21 +1291,7 @@ write(*,*) 'SNPFN ',SNPFN
               END DO
             END DO
           END IF
-
-!******** Constituent mass
-
-          DO JC=1,NAC
-            JAC = CN(JC)
-            DO I=CUS(JB),DS(JB)
-              CMBRT(JAC,JB) = CMBRT(JAC,JB)+C2(KT,I,JAC)*DLX(I)  &
-                              *BHKT2(I)
-              DO K=KT+1,KB(I)
-                CMBRT(JAC,JB) = CMBRT(JAC,JB)+C2(K,I,JAC)*DLX(I)  &
-                                *BH(K,I)
-              END DO
-            END DO
-          END DO
-
+!
 !******** Ice cover
 
           IF (ICE_CALC) THEN
@@ -1427,12 +1317,7 @@ write(*,*) 'SNPFN ',SNPFN
 
         DO I=IU,ID
           DO K=KT,KB(I)
-            IF (CONSTITUENTS) THEN
-!              RHO(K,I) = DENSITY (T2(K,I),SS(K,I),TDS(K,I))
-              RHO(K,I) = 999.999             
-            ELSE
-              RHO(K,I) = DENSITY (T2(K,I),0.0,0.0)
-            END IF
+            RHO(K,I) = DENSITY (T2(K,I),0.0,0.0)
           END DO
         END DO
 
@@ -1663,9 +1548,6 @@ write(*,*) 'SNPFN ',SNPFN
           IDT = ID
           IF (UP_FLOW(JB)) THEN
             DO K=KT,KB(IU)
-              DO JC=1,NAC
-                C1S(K,IU-1,CN(JC)) = CIN(CN(JC),JB)
-              END DO
               IF (QIN(JB).GT.0.0) THEN
                 T1(K,IU-1) = TIN(JB)
                 T2(K,IU-1) = TIN(JB)
@@ -1677,9 +1559,6 @@ write(*,*) 'SNPFN ',SNPFN
           END IF
           IF (DN_FLOW(JB)) THEN
             DO K=KT,KB(IU)
-              DO JC=1,NAC
-                C1S(K,ID+1,CN(JC)) = C1S(K,ID,CN(JC))
-              END DO
               T1(K,ID+1) = T2(K,ID)
               T2(K,ID+1) = T2(K,ID)
             END DO
@@ -1687,11 +1566,6 @@ write(*,*) 'SNPFN ',SNPFN
             IUT = IU-1
             IF (UH_INTERNAL(JB)) THEN
               DO K=KT,KB(IUT)
-                DO JC=1,NAC
-                  C1S(K,IUT,CN(JC)) = C1S(K,UHS(JB),CN(JC))
-                  C1(K,IUT,CN(JC))  = C1S(K,UHS(JB),CN(JC))
-                  C2(K,IUT,CN(JC))  = C1S(K,UHS(JB),CN(JC))
-                END DO
                 T1(K,IUT)  = T2(K,UHS(JB))
                 T2(K,IUT)  = T2(K,UHS(JB))
                 RHO(K,IUT) = RHO(K,UHS(JB))
@@ -2276,23 +2150,14 @@ write(*,*) 'SNPFN ',SNPFN
 
 !****!****!**** Solar radiation
 
-!                IF (CONSTITUENTS) THEN
-!                  GAMMA = EXH2O+EXSS*SS(KT,I)+EXOM*(ALGAE(KT,I)  &
-!                          +LPOM(KT,I))
-!                ELSE
                   GAMMA = EXH2O
-!                END IF
+!
                 TFLUX     = (1.0-BETA)*SRON*EXP(-GAMMA*DEPTHB(KT))  &
                             *B(KTI(I),I)*DLX(I)
                 TSS(KT,I) = TSS(KT,I)-TFLUX
                 TSSS(JB)  = TSSS(JB)-TFLUX*DLT
                 DO K=KT+1,KB(I)
-!                  IF (CONSTITUENTS) THEN
-!                    GAMMA = EXH2O+EXSS*SS(K,I)+EXOM*(ALGAE(K,I)  &
-!                            +LPOM(K,I))
-!                  ELSE
-                    GAMMA = EXH2O
-!                  END IF
+                  GAMMA = EXH2O
                   TFLUX    = (1.0-BETA)*SRON*(EXP(-GAMMA*DEPTHB(K))  &
                              -EXP(-GAMMA*DEPTHB(K+1)))*B(K,I)*DLX(I)
                   TSS(K,I) = TSS(K,I)+TFLUX
@@ -2755,16 +2620,7 @@ write(*,*) 'add layers ',kt-1,jday
               BHKT1(I) = BHKT1(I)-BH(KT+1,I)
               BKT(I)   = BHKT1(I)/HKT1(I)
               T1(KT,I) = T1(KT+1,I)
-              DO JC=1,NAC
-                C1(KT,I,CN(JC))   = C1(KT+1,I,CN(JC))
-                CSSK(KT,I,CN(JC)) = CSSK(KT+1,I,CN(JC))
-              END DO
-              IF (CONSTITUENTS) THEN
-!                RHO(KT,I) = DENSITY (T2(KT,I),SS(KT,I),TDS(KT,I))
-                RHO(KT,I) = 999.999
-              ELSE
-                RHO(KT,I) = DENSITY (T2(KT,I),0.0,0.0)
-              END IF
+              RHO(KT,I) = DENSITY (T2(KT,I),0.0,0.0)
             END DO
             DO I=IU-1,ID
               BHRKT1(I) = (BHKT1(I)+BHKT1(I+1))*0.5
@@ -2809,14 +2665,6 @@ write(*,*) 'add layers ',kt-1,jday
                   T2(K,I) = T1(K,IU)
                   U(K,I)  = U(K,IU-1)
                   SU(K,I) = U(K,IU-1)
-                  DO JC=1,NAC
-                    BHT = BH(K,I)
-                    IF (K.EQ.KT) BHT = BHKT1(I)
-                    C1(K,I,CN(JC))   = C1(K,IU,CN(JC))
-                    C2(K,I,CN(JC))   = C1(K,IU,CN(JC))
-                    CMBRT(CN(JC),JB) = CMBRT(CN(JC),JB)+C1(K,IU,CN(JC))  &
-                                       *DLX(I)*BHT
-                  END DO
                 END DO
                 DO K=KT,KB(I)-1
                   AZ(K,I)  = AZ(K,IU)
@@ -2827,11 +2675,6 @@ write(*,*) 'add layers ',kt-1,jday
                 U(K,IU-1)  = 0.0
                 SU(K,IU-1) = 0.0
                 TADL(K,IU) = 0.0
-                IF (CONSTITUENTS) THEN
-                  DO JAC=1,NAC
-                    CADL(K,IU,CN(JAC)) = 0.0
-                  END DO
-                END IF
               END DO
               IF (SHIFT_DEMAND) THEN
                 IDIFF = IUT-US(JB)
@@ -2885,17 +2728,6 @@ write(*,*) 'add layers ',kt-1,jday
               BKT(I)   = BHKT1(I)/HKT1(I)
               T1(KT,I) = (T1(KT-1,I)*(BHKT1(I)-BH(KT,I))  &
                          +T1(KT,I)*BH(KT,I))/BHKT1(I)
-              DO JC=1,NAC
-                JAC              = CN(JC)
-write(*,*) JC,JAC,C1(KT,I,JAC)
-                C1(KT,I,JAC)     = (C1(KT-1,I,JAC)*(BHKT1(I)-BH(KT,I))  &
-                                   +C1(KT,I,JAC)*BH(KT,I))/BHKT1(I)
-                CSSB(KT,I,JAC)   = CSSB(KT-1,I,JAC)+CSSB(KT,I,JAC)
-                CSSK(KT,I,JAC)   = (CSSK(KT-1,I,JAC)*(BHKT1(I)-BH(KT,I))  &
-                                   +CSSK(KT,I,JAC)*BH(KT,I))/BHKT1(I)
-                CSSB(KT-1,I,JAC) = 0.0
-                CSSK(KT-1,I,JAC) = 0.0
-              END DO
             END DO
             DO I=IU-1,ID
               BHRKT1(I) = (BHKT1(I)+BHKT1(I+1))*0.5
@@ -2917,20 +2749,6 @@ write(*,*) 'active segment'
 
             IF (IUT.NE.IU) THEN
               IF (SNAPSHOT) WRITE (SNP,4030) IU,IUT-1,JDAY
-              DO I=IU,IUT-1
-                DO JC=1,NAC
-                  VOL              = BHKT1(I)*DLX(I)
-                  CMBRT(CN(JC),JB) = CMBRT(CN(JC),JB)-C1(KT,I,CN(JC))  &
-                                     *VOL+(CSSB(KT,I,CN(JC))  &
-                                     +CSSK(KT,I,CN(JC))*VOL)*DLT
-                  DO K=KT+1,KB(I)
-                    VOL              = BH(K,I)*DLX(I)
-                    CMBRT(CN(JC),JB) = CMBRT(CN(JC),JB)-C1(K,I,CN(JC))  &
-                                       *VOL+(CSSB(K,I,CN(JC))  &
-                                       +CSSK(K,I,CN(JC))*VOL)*DLT
-                  END DO
-                END DO
-              END DO
               DO I=IU-1,IUT-1
                 F(I)     = 0.0
                 Z(I)     = 0.0
@@ -2945,14 +2763,6 @@ write(*,*) 'active segment'
                   T1(K,I)   = 0.0
                   TADL(K,I) = 0.0
                   QSS(K,I)  = 0.0
-                  DO JC=1,NAC
-                    C1(K,I,CN(JC))   = 0.0
-                    C2(K,I,CN(JC))   = 0.0
-                    C1S(K,I,CN(JC))  = 0.0
-                    CADL(K,I,CN(JC)) = 0.0
-                    CSSB(K,I,CN(JC)) = 0.0
-                    CSSK(K,I,CN(JC)) = 0.0
-                  END DO
                 END DO
               END DO
               IF (SHIFT_DEMAND) THEN
@@ -3023,29 +2833,6 @@ write(*,*) 'Checkpoint 3.19 active cells'
               DO K=KT+1,KB(I)
                 ESBR(JB) = ESBR(JB)+T1(K,I)*DLX(I)*BH(K,I)
               END DO
-            END DO
-          END DO
-        END IF
-        IF (MASS_BALANCE) THEN
-          DO JB=1,NBP
-            DO JC=1,NAC
-              JAC = CN(JC)
-write(*,*) 'Checkpoint 3.19 Mass balance'
-              IF (TRANSPORT(JAC)) THEN
-                CMBRS(JAC,JB) = 0.0
-                DO I=CUS(JB),DS(JB)
-                  CMBRS(JAC,JB) = CMBRS(JAC,JB)+C1(KT,I,JAC)*DLX(I)  &
-                                  *BHKT1(I)
-                  CMBRT(JAC,JB) = CMBRT(JAC,JB)+(CSSB(KT,I,JAC)  &
-                                  +CSSK(KT,I,JAC)*BHKT1(I)*DLX(I))*DLT
-                  DO K=KT+1,KB(I)
-                    CMBRS(JAC,JB) = CMBRS(JAC,JB)+C1(K,I,JAC)*DLX(I)  &
-                                    *BH(K,I)
-                    CMBRT(JAC,JB) = CMBRT(JAC,JB)+(CSSB(K,I,JAC)  &
-                                    +CSSK(K,I,JAC)*BH(K,I)*DLX(I))*DLT
-                  END DO
-                END DO
-              END IF
             END DO
           END DO
         END IF
@@ -3120,25 +2907,6 @@ write(*,*) 'Checkpoint 3.19 Mass balance'
               TSSDH2(K,JB) = TSSDH1(K,JB)*DLT
             END DO
           END IF
-          DO JC=1,NAC
-            DO I=IU-1,ID+1
-              DO K=KT,KB(I)
-                C1S(K,I,CN(JC))  = C1(K,I,CN(JC))
-                C2(K,I,CN(JC))   = MAX(C1(K,I,CN(JC)),0.0)
-                CSSB(K,I,CN(JC)) = 0.0
-              END DO
-            END DO
-            IF (UH_INTERNAL(JB)) THEN
-              DO K=KT,KB(IU-1)
-                CSSUH2(K,CN(JC),JB) = CSSUH1(K,CN(JC),JB)*DLT
-              END DO
-            END IF
-            IF (DH_INTERNAL(JB)) THEN
-              DO K=KT,KB(ID+1)
-                CSSDH2(K,CN(JC),JB) = CSSDH1(K,CN(JC),JB)*DLT
-              END DO
-            END IF
-          END DO
         END DO
         ELKT = EL(KT)-Z(DS(1))
         DO I=1,IMP
@@ -3158,11 +2926,8 @@ write(*,*) 'Checkpoint 3.19 Mass balance'
         END_RUN = JDAY.GE.TMEND 
         DLTS    = DLT
         DLT     = INT(MAX(DLTMIN,DLTF(DLTDP)*CURMAX))
-!if (JDAY .lt. 9.0) write(*,*) 'DLT 1',JDAY,NIT0,ELTEST,DLTMIN,DLTF(DLTDP)*CURMAX 
         DLT     = MIN(DLT,DLTS+1.0*DLTS)
-!if (JDAY .lt. 9.0) write(*,*) 'DLT 2',JDAY,NIT0,ELTEST,DLT,DLTS+1.0*DLTS
         DLT     = MIN(DLT,DLTTVD)
-!if (JDAY .lt. 9.0) write(*,*) 'DLT 3',JDAY,NIT0,ELTEST,ELTM,DLT,DLTTVD
         DLTAV   = (ELTM-TMSTRT*86400.0)/NIT
         IF (JDAY.GE.WSCD(WSCDP+1)) WSCDP = WSCDP+1
         IF (JDAY.GE.DLTD(DLTDP+1)) DLTDP = DLTDP+1
@@ -3245,20 +3010,6 @@ end if
               WRITE (SNP,3180) (KWD(JW),JW=1,NWD)
               WRITE (SNP,3190) (QWD(JW),JW=1,NWD)
             END IF
-            IF (CONSTITUENTS) THEN
-              WRITE (SNP,3200) 'Constituent Inflow Concentrations'
-              DO JB=1,NBP
-                IF (UP_FLOW(JB)) THEN
-                  WRITE (SNP,3210) JB,(CNAME1(INCN(JC)),  &
-                                   CIN(INCN(JC),JB),CUNIT2(INCN(JC)),  &
-                                   JC=1,NACIN)
-                END IF
-              END DO
-              DO JT=1,NTR
-                WRITE (SNP,3220) JT,(CNAME1(TRCN(JC)),CTR(TRCN(JC),JT),  &
-                                 CUNIT2(JC),JC=1,NACTR)
-              END DO
-            END IF
             IF (EVAPORATION.OR.PRECIPITATION) WRITE(SNP,3240) 'Surface',  &
                                               ' Calculations'
             IF (EVAPORATION)   WRITE (SNP,3250) (JB,EVBR(JB),JB=1,NBP)
@@ -3279,26 +3030,6 @@ end if
                 IF (ESBR(JB).NE.0.0) DLE = (ESBR(JB)-ETBR(JB))/ESBR(JB)
                 WRITE (SNP,3340) ESBR(JB)*4.184E3,ETBR(JB)*4.1843E3,  &
                                  (ESBR(JB)-ETBR(JB))*4.1843E3,DLE*100.0
-              END DO
-            END IF
-            IF (MASS_BALANCE) THEN
-              WRITE (SNP,3350)
-              DO JB=1,NBP
-                WRITE (SNP,3330) JB
-                DO JC=1,NAC
-                  JAC = CN(JC)
-                  IF (TRANSPORT(JAC)) THEN
-                    IF (CMBRS(JAC,JB).NE.0.0) THEN 
-                      DLMR = (CMBRT(JAC,JB)-CMBRS(JAC,JB))  &
-                             /(CMBRS(JAC,JB)+NONZERO)
-                    END IF
-                    WRITE (SNP,3360) CNAME1(JAC),CMBRS(JAC,JB),  &
-                                     CUNIT3(JAC),CMBRT(JAC,JB),  &
-                                     CUNIT3(JAC),(CMBRT(JAC,JB)  &
-                                     -CMBRS(JAC,JB)),CUNIT3(JAC),  &
-                                     DLMR*100.0
-                  END IF
-                END DO
               END DO
             END IF
             WRITE (SNP,3370) 'Geometry',KT,ELKT,(JB,CUS(JB),JB=1,NBP)
@@ -3327,16 +3058,6 @@ end if
             IF (M.EQ.5)                       MON = MONTH(7:9)
             WRITE (PRF,2590) JDAY,MON,GDAY,YEAR,KT,SNGL(Z(DS(1))),  &
                              NSPRF
-            DO JC=1,NAC
-              IF (CPRC(CN(JC)).EQ.' ON') THEN
-                DO JPRF=1,NIPRF
-                  I   = IPRF(JPRF)
-                  NRS = KB(I)-KT+1
-                  WRITE (PRF,2560) CN(JC),NRS,(C2(K,I,CN(JC)),  &
-                                   K=KT,KB(I))
-                END DO
-              END IF
-            END DO
             DO JPRF=1,NIPRF
               I   = IPRF(JPRF)
               NRS = KB(I)-KT+1
@@ -3363,19 +3084,6 @@ end if
             DO K=KT,KBMAX
               WRITE (SPR,2570) 'Temperature      ',JDAY,-DEPTHM(K),  &
                                (CONV1(K,J),J=1,NISPR)
-            END DO
-            DO JC=1,NAC
-              IF (CPRC(CN(JC)).EQ.' ON') THEN
-                DO J=1,NISPR
-                  DO K=KT,KB(ISPR(J))
-                    WRITE (CONV1(K,J),'(1PE9.2)') C2(K,ISPR(J),CN(JC))
-                  END DO
-                END DO
-                DO K=KT,KBMAX
-                  WRITE (SPR,2570) CNAME1(CN(JC)),JDAY,-DEPTHM(K),  &
-                                   (CONV1(K,J),J=1,NISPR)
-                END DO
-              END IF
             END DO
           END IF
         END IF
@@ -3414,13 +3122,6 @@ end if
               DO I=CUS(JB),DS(JB)
                 WRITE (CPL,8050) (T2(K,I),K=KT,KB(I))
               END DO
-              DO JC=1,NAC
-                DO I=CUS(JB),DS(JB)
-                  IF (CPRC(CN(JC)).EQ.' ON') THEN
-                    WRITE (CPL,8050) (C2(K,I,CN(JC)),K=KT,KB(I))
-                  END IF
-                END DO
-              END DO
             END DO
           END IF
         END IF
@@ -3437,40 +3138,18 @@ end if
             DO JB=1,NBP
               IF (DN_FLOW(JB)) THEN
                 AVTOUT = 0.0
-                DO JC=1,NAC
-                  AVCOUT(CN(JC)) = 0.0
-                END DO
                 DO K=KT,KB(DS(JB))
                   AVTOUT = AVTOUT+T2(K,DS(JB))*QOUT(K,JB)
-                  DO JC=1,NAC
-                    AVCOUT(CN(JC)) = AVCOUT(CN(JC))+QOUT(K,JB)  &
-                                     *C2(K,DS(JB),CN(JC))
-                  END DO
                 END DO
                 IF (QSUM(JB).GT.0.0) THEN
                   AVTOUT = AVTOUT/QSUM(JB)
-                  DO JC=1,NAC
-                    AVCOUT(CN(JC)) = AVCOUT(CN(JC))/QSUM(JB)
-                  END DO
                 END IF
               END IF
             END DO
             IF (WITHDRAWALS) THEN
               DO JW=1,NWD
                 TWD(JW) = T2(MAX(KT,KWD(JW)),MAX(CUS(JBWD(JW)),IWD(JW)))
-                DO JC=1,NAC
-                  CWD(CN(JC),JW) = C2(MAX(KT,KWD(JW)),MAX(CUS(JBWD(JW)),  &
-                                   IWD(JW)),CN(JC))
-                END DO
               END DO
-            END IF
-            IF (WITHDRAWALS) THEN
-              WRITE (TSR,5030) JDAY,DLT,ELKT,AVTOUT,(AVCOUT(CN(JC)),  &
-                               JC=1,NAC),(TWD(JW),JW=1,NWD),  &
-                               ((CWD(CN(JC),JW),JC=1,NAC),JW=1,NWD)
-            ELSE
-              WRITE (TSR,5030) JDAY,DLT,ELKT,AVTOUT,(AVCOUT(CN(JC)),  &
-                               JC=1,NAC)
             END IF
           END IF
         END IF
@@ -4201,23 +3880,6 @@ NIT0 = 0
             END IF
             NXTVD = MIN(NXTVD,NXTTR1(JT))
 
-!****!***** Inflow constituent concentrations
-
-            IF (CONSTITUENTS) THEN
-              IF (JDAY.GE.NXCTR1(JT)) THEN
-                DO WHILE (JDAY.GE.NXCTR1(JT))
-                  NXCTR2(JT) = NXCTR1(JT)
-                  DO JC=1,NACTR
-                    CTR(TRCN(JC),JT)  = CTRNX(TRCN(JC),JT)
-                    CTRO(TRCN(JC),JT) = CTRNX(TRCN(JC),JT)
-                  END DO
-!                  READ (TRC(JT),1030) NXCTR1(JT),(CTRNX(TRCN(JC),JT),  &
-                  READ (TRC(JT),*) NXCTR1(JT),(CTRNX(TRCN(JC),JT),  &
-                                      JC=1,NACTR)
-                END DO
-              END IF
-              NXTVD = MIN(NXTVD,NXCTR1(JT))
-            END IF
           END DO
         END IF
 
@@ -4250,23 +3912,6 @@ NIT0 = 0
             END IF
             NXTVD = MIN(NXTVD,NXTIN1(JB))
 
-!****!***** Inflow constituent concentrations
-
-            IF (CONSTITUENTS) THEN
-              IF (JDAY.GE.NXCIN1(JB)) THEN
-                DO WHILE (JDAY.GE.NXCIN1(JB))
-                  NXCIN2(JB) = NXCIN1(JB)
-                  DO JC=1,NACIN
-                    CIN(INCN(JC),JB)  = CINNX(INCN(JC),JB)
-                    CINO(INCN(JC),JB) = CINNX(INCN(JC),JB)
-                  END DO
-!                  READ (INC(JB),1030) NXCIN1(JB),(CINNX(INCN(JC),JB),  &
-                  READ (INC(JB),*) NXCIN1(JB),(CINNX(INCN(JC),JB),  &
-                                      JC=1,NACIN)
-                END DO
-              END IF
-              NXTVD = MIN(NXTVD,NXCIN1(JB))
-            END IF
           END IF
 
 !******** Outflow
@@ -4317,21 +3962,6 @@ NIT0 = 0
               END DO
             END IF
             NXTVD = MIN(NXTVD,NXTPR1(JB))
-
-!****!***** Constituent concentrations
-
-            IF (CONSTITUENTS) THEN
-              IF (JDAY.GE.NXCPR1(JB)) THEN
-                DO WHILE (JDAY.GE.NXCPR1(JB))
-                  DO JC=1,NACPR
-                    CPR(PRCN(JC),JB) = CPRNX(PRCN(JC),JB)
-                  END DO
-                  READ (PRC(JB),1030) NXCPR1(JB),(CPRNX(PRCN(JC),JB),  &
-                                      JC=1,NACPR)
-                END DO
-              END IF
-              NXTVD = MIN(NXTVD,NXCPR1(JB))
-            END IF
           END IF
 !
         END DO
@@ -4434,10 +4064,6 @@ NIT0 = 0
               END IF
               QTR(JT) = (1.0-QRATIO)*QTRNX(JT)+QRATIO*QTRO(JT)
               TTR(JT) = (1.0-TRATIO)*TTRNX(JT)+TRATIO*TTRO(JT)
-              DO JC=1,NACTR
-                CTR(TRCN(JC),JT) = (1.0-CRATIO)*CTRNX(TRCN(JC),JT)  &
-                                   +CRATIO*CTRO(TRCN(JC),JT)
-              END DO
             END DO
           END IF
         END IF
@@ -4457,10 +4083,6 @@ NIT0 = 0
               END IF
               QIN(JB) = (1.0-QRATIO)*QINNX(JB)+QRATIO*QINO(JB)
               TIN(JB) = (1.0-TRATIO)*TINNX(JB)+TRATIO*TINO(JB)
-              DO JC=1,NACIN
-                CIN(INCN(JC),JB) = (1.0-CRATIO)*CINNX(INCN(JC),JB)  &
-                                   +CRATIO*CINO(INCN(JC),JB)
-              END DO
             END IF
           END IF
 
@@ -4787,37 +4409,7 @@ NIT0 = 0
             END DO
           END IF
         END DO
-
-!****** Constituent concentrations
-
-        DO J=1,NAC
-          IF (CPRC(CN(J)).EQ.' ON') THEN
-            MULT = 1.0
-            IF (CN(J).GE.9.AND.CN(J).LE.11) MULT = 1000.0
-            DO I=IBPR,IEPR
-              DO K=KT,KB(IPR(I))
-                WRITE (CONV(K,I),'(F7.2)') C2(K,IPR(I),CN(J))*MULT
-              END DO
-            END DO
-            DO JBL=1,NBL
-              DO K=KT,KB(IPR(BL(JBL)))
-                CONV(K,BL(JBL)) = BLANK
-              END DO
-            END DO
-            IF (NEW_PAGE) THEN
-              WRITE (SNP,3040) (TITLE(I),I=1,7)
-              NLINES = KMP-KT+14
-            END IF
-            NLINES   = NLINES+KMP-KT+6
-            NEW_PAGE = NLINES.GT.72
-            WRITE (SNP,3050) MONTH,GDAY,YEAR,INT(JDAY),(JDAY-INT(JDAY))  &
-                             *24.0,CNAME2(CN(J))
-            WRITE (SNP,3080) (IPR(I),I=IBPR,IEPR)
-            DO K=KT,KBPR
-              WRITE (SNP,3090) K,DEPTHM(K),(CONV(K,I),I=IBPR,IEPR)
-            END DO
-          END IF
-        END DO
+!
         IF (LIMITING_FACTOR) THEN
           IF (NEW_PAGE) THEN
             WRITE (SNP,3040) (TITLE(I),I=1,7)
