@@ -508,7 +508,6 @@
 
       READ (CON,1030)  EXH2O,  EXSS,   EXOM,   BETA
 !
-
 !**** Input filenames
 
       READ (CON,1000)  BTHFN
@@ -2840,9 +2839,6 @@ if (eltest+dlt .gt. 86400.0) then
    eltest = 0.0
    dlt = dlt_diff
    if (dlt .lt. 0.001) dlt = 1.0
-
-   write(*,*) 'dlt_diff ',dlt_diff
-
 end if
         IF (DLTS.LT.MINDLT.AND.DLTS.NE.DLTTVDS) THEN
           MINDLT = DLTS
@@ -4554,6 +4550,5 @@ NIT0 = 0
 !        CALL TIME (CTIME)    
 !      RETURN                                                              !FORTRAN
       END
-
 
 
